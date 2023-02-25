@@ -1,0 +1,59 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "Full Stack Banking Application APIs",
+    "description": "APIs that are used in Full Stack Banking Application",
+    "license": {
+      "name": "MIT",
+      "url": "https://opensource.org/licenses/MIT"
+    }
+  },
+  "host": "localhost:3000",
+  "basePath": "/",
+  "tags": [
+    {
+      "name": "BankingApplication",
+      "description": "APIs for users in the system"
+    }
+  ],
+  "schemes": ["http"],
+  "consumes": ["application/json"],
+  "produces": ["application/json"],
+  "paths": {
+    "/account/all": {
+      "get": {
+        "tags": ["AllAccounts"],
+        "summary": "Get all user accounts in the system",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Restaurant"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Users": {
+      "required": ["email"],
+      "properties": {
+        "email": {
+          "type": "integer",
+          "uniqueItems": true
+        },
+        "name": {
+          "type": "string"
+        },
+        "password": {
+          "type": "password"
+        },
+        "balance": {
+          "type": "float"
+        }
+      }
+    }
+  }
+}
