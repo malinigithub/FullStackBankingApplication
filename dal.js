@@ -1,4 +1,4 @@
-const MongoClient = require('mongodb').MongoClient;
+/*const MongoClient = require('mongodb').MongoClient;
 const url         = 'mongodb://localhost:27017';
 let db            = null;
  
@@ -75,4 +75,4 @@ function all(){
 }
 
 
-module.exports = {create, findOne, find, update, all};
+module.exports = {create, findOne, find, update, all};*/
