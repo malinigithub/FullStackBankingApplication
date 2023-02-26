@@ -66,7 +66,7 @@ app.get("/account/findOne/:email", function (req, res) {
 
 // update - deposit/withdraw amount
 app.get("/account/update/:email/:amount", function (req, res) {
-  var amount = Number(req.params.amount);
+  var amount = Number(parseFloat(req.params.amount).toFixed(2));
 
   dal.update(req.params.email, amount).then((response) => {
     console.log(response);
