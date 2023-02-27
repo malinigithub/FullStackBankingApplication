@@ -4,7 +4,13 @@ function NavBar() {
   let disabled = true;
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-light">
-      <a className="navbar-brand" href="#">
+      <a
+        className="navbar-brand"
+        data-toggle="tool-tip"
+        data-placement="bottom"
+        title="Home Page"
+        href="#"
+      >
         BadBank
       </a>
       <button
