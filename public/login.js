@@ -45,6 +45,12 @@ function LoginForm(props) {
   const [password, setPassword] = React.useState("");
 
   function handle() {
+    if (!email || !password) {
+      props.setStatus("Error: Missing data");
+      alert("Please enter all the information");
+      setTimeout(() => props.setStatus(""), 3000);
+      return false;
+    }
     fetch(`/account/login/${email}/${password}`)
       .then((response) => response.text())
       .then((text) => {
@@ -78,7 +84,7 @@ function LoginForm(props) {
         className="form-control"
         placeholder="Enter email"
         value={email}
-        onChange={(e) => setEmail(e.currentTarget.value)}
+        onChange={(e) => setEmail(e.currentTarget.value.toLowerCase())}
       />
       <br />
       Password

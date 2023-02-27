@@ -48,6 +48,24 @@ function CreateForm(props) {
   const [password, setPassword] = React.useState("");
 
   function handle() {
+    if (!name || !email || !password) {
+      props.setStatus("Error: Missing data");
+      alert("Please enter all the information");
+      setTimeout(() => props.setStatus(""), 3000);
+      return false;
+    }
+    if (!email.includes("@") || !email.includes(".")) {
+      props.setStatus("Error: Enter valid email id");
+      alert("Enter valid email id");
+      setTimeout(() => props.setStatus(""), 3000);
+      return false;
+    }
+    if (password.length < 8) {
+      props.setStatus("Error: Password must be 8 characters");
+      alert("Password must be 8 characters");
+      setTimeout(() => props.setStatus(""), 3000);
+      return false;
+    }
     console.log(name, email, password);
     const url = `/account/create/${name}/${email}/${password}`;
     (async () => {
@@ -91,7 +109,7 @@ function CreateForm(props) {
         className="form-control"
         placeholder="Enter email"
         value={email}
-        onChange={(e) => setEmail(e.currentTarget.value)}
+        onChange={(e) => setEmail(e.currentTarget.value.toLowerCase())}
       />
       <br />
       Password
