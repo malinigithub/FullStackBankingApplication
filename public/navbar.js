@@ -4,7 +4,13 @@ function NavBar() {
   let disabled = true;
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-light">
-      <a className="navbar-brand" href="#">
+      <a
+        className="navbar-brand"
+        data-toggle="tool-tip"
+        data-placement="bottom"
+        title="Home Page"
+        href="#"
+      >
         BadBank
       </a>
       <button
@@ -21,22 +27,46 @@ function NavBar() {
       <div className="collapse navbar-collapse" id="navbarNav">
         <ul className="navbar-nav">
           <li className="nav-item">
-            <a className="nav-link" href="#/deposit/">
+            <a
+              className="nav-link"
+              data-toggle="tooltip"
+              data-placement="bottom"
+              title="Deposit money here"
+              href="#/deposit/"
+            >
               Deposit
             </a>
           </li>
           <li className="nav-item">
-            <a className="nav-link" href="#/withdraw/">
+            <a
+              className="nav-link"
+              data-toggle="tooltip"
+              data-placement="bottom"
+              title="Withdraw money here"
+              href="#/withdraw/"
+            >
               Withdraw
             </a>
           </li>
           <li className="nav-item">
-            <a className="nav-link" href="#/balance/">
+            <a
+              className="nav-link"
+              data-toggle="tooltip"
+              data-placement="bottom"
+              title="Check your balance"
+              href="#/balance/"
+            >
               Balance
             </a>
           </li>
           <li className="nav-item">
-            <a className="nav-link" href="#/alldata/">
+            <a
+              className="nav-link"
+              data-toggle="tooltip"
+              data-placement="bottom"
+              title="View allData"
+              href="#/alldata/"
+            >
               AllData
             </a>
           </li>
@@ -62,7 +92,7 @@ function NavBar() {
             className="nav-link"
             data-toggle="tool-tip"
             data-placement="bottom"
-            title="Login"
+            title="Click here to Login"
             href="#/login/"
             id="loginLink"
           >
@@ -74,7 +104,7 @@ function NavBar() {
             className="nav-link"
             data-toggle="tool-tip"
             data-placement="bottom"
-            title="Logout"
+            title="Click here to Logout"
             href="#/logout/"
             id="logoutLink"
             style={{ display: "none" }}
