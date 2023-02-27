@@ -15,11 +15,17 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 // create user account
 app.get("/account/create/:name/:email/:password", function (req, res) {
   // check if account exists
+  if (!req.params.email.includes("@") || !req.params.email.includes(".")) {
+    res.send("Error: Enter valid email id");
+  }
+  if (req.params.password.length < 8) {
+    res.send("Error: Password must be 8 characters");
+  }
   dal.find(req.params.email).then((users) => {
     // if user exists, return error message
     if (users.length > 0) {
       console.log("User already exists");
-      res.sendStatus(403);
+      //res.sendStatus(403);
       res.send("User already exists");
     } else {
       // else create user

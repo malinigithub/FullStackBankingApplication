@@ -70,8 +70,10 @@ function DepositForm(props) {
   let email = props.userCtx.currentUser.email;
 
   function handle() {
-    if (amount <= 0) {
-      alert("Enter a positive number");
+    if (amount <= 0 || amount > 15000) {
+      alert("Enter an amount between 0 and 15000");
+      props.setStatus("Enter an amount between 0 and 15000");
+
       return false;
     }
     fetch(`/account/update/${email}/${amount}`)
