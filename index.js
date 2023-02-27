@@ -15,8 +15,6 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 // create user account
 app.get("/account/create/:name/:email/:password", function (req, res) {
   // check if account exists
-  console.log("create account flow");
-
   dal.find(req.params.email).then((users) => {
     // if user exists, return error message
     if (users.length > 0) {
@@ -25,7 +23,6 @@ app.get("/account/create/:name/:email/:password", function (req, res) {
       res.send("User already exists");
     } else {
       // else create user
-      console.log("else part");
       dal
         .create(req.params.name, req.params.email, req.params.password)
         .then((user) => {
