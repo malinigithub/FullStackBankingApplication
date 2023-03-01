@@ -1,11 +1,12 @@
-const MongoClient = require("mongodb").MongoClient;
+const mongoose = require("mongoose");
+//const MongoClient = require("mongodb").MongoClient;
 const dotenv = require("dotenv");
 dotenv.config();
 const url = process.env.DB_URL;
 let db = null;
 
 // connect to mongo
-MongoClient.connect(url, { useUnifiedTopology: true }, function (err, client) {
+mongoose.connect(url, { useUnifiedTopology: true }, function (err, client) {
   console.log("Connected successfully to db server");
 
   // connect to myproject database
