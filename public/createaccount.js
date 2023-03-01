@@ -67,6 +67,7 @@ function CreateForm(props) {
       return false;
     }
     console.log(name, email, password);
+    console.log("mongoDB changes included");
     const url = `/account/create/${name}/${email}/${password}`;
     fetch(url)
       .then((response) => response.text())

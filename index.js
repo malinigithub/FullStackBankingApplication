@@ -17,6 +17,8 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 // create user account
 app.get("/account/create/:name/:email/:password", function (req, res) {
   // check if account exists
+  console.log("mongoDB changes included");
+  console.log("inside index.js file");
   if (!req.params.email.includes("@") || !req.params.email.includes(".")) {
     res.send("Error: Enter valid email id");
   }
