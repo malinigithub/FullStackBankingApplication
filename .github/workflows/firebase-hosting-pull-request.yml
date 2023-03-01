@@ -9,9 +9,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - run: touch .env
-          echo DB_URL=${{ secrets.DB_URL }} >> .env
-          cat .env
+     # - run: touch .env
+     #     echo DB_URL=${{ secrets.DB_URL }} >> .env
+     #     cat .env
       - run: npm install 
       #- run: node index.js
       - uses: FirebaseExtended/action-hosting-deploy@v0

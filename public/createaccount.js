@@ -72,6 +72,8 @@ function CreateForm(props) {
     fetch(url)
       .then((response) => response.text())
       .then((text) => {
+        console.log("mongoDB URL Directly included");
+
         try {
           //if (res.status === 403) {
           if (text === "User already exists") {
@@ -95,6 +97,8 @@ function CreateForm(props) {
             props.setShow(false);
           }
         } catch (err) {
+          console.log("ERROR FLOW mongoDB URL Directly included");
+
           props.setStatus(text);
           console.log("err:", err + "data: " + text);
         }
