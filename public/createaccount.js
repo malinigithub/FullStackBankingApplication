@@ -49,8 +49,8 @@ function CreateForm(props) {
 
   function handle() {
     if (!name || !email || !password) {
-      props.setStatus("Error: Missing data");
-      alert("Please enter all the information");
+      props.setStatus("Error: Please enter all the three fields");
+      alert("Please enter all the three fields");
       setTimeout(() => props.setStatus(""), 3000);
       return false;
     }

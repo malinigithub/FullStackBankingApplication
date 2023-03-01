@@ -5,10 +5,12 @@ var dal = require("./dal.js");
 const e = require("express");
 const swaggerUi = require("swagger-ui-express");
 const swaggerDocument = require("./swagger.json");
+//const authMiddleware = require("./auth");
 
 // used to serve static files from public directory
 app.use(express.static("public"));
 app.use(cors());
+//app.use(authMiddleware);
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
