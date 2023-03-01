@@ -4,7 +4,6 @@ const dotenv = require("dotenv");
 dotenv.config();
 const url = process.env.DB_URL;
 let db = null;
-console.log("URL" + process.env.DB_URL);
 
 // connect to mongo
 MongoClient.connect(url, { useUnifiedTopology: true }, function (err, client) {
