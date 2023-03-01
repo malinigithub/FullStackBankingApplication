@@ -68,26 +68,36 @@ function CreateForm(props) {
     }
     console.log(name, email, password);
     const url = `/account/create/${name}/${email}/${password}`;
-    (async () => {
-      var res = await fetch(url);
-      if (res.status === 403) {
-        props.setStatus("User " + email + " already exists");
-        props.setShow(true);
-      } else {
-        var data = await res.json();
-        console.log(data);
-        let userName = document.getElementById("userName");
-        userName.innerHTML = email;
-        //document.getElementById("logoutLink").classList.remove("disabled");
-        document.getElementById("createAccountLink").style.display = "none";
-        document.getElementById("loginLink").style.display = "none";
-        document.getElementById("logoutLink").style.display = "";
+    fetch(url)
+      .then((response) => response.text())
+      .then((text) => {
+        try {
+          //if (res.status === 403) {
+          if (text === "User already exists") {
+            props.setStatus("Error: User " + email + " already exists");
+            alert("Error: User " + email + " already exists");
+            setTimeout(() => props.setStatus(""), 3000);
+            props.setShow(true);
+          } else {
+            const data = JSON.parse(text);
 
-        props.userCtx.currentUser = data;
-        props.setStatus("User " + email + " successfully created");
-        props.setShow(false);
-      }
-    })();
+            console.log(data);
+            let userName = document.getElementById("userName");
+            userName.innerHTML = email;
+            //document.getElementById("logoutLink").classList.remove("disabled");
+            document.getElementById("createAccountLink").style.display = "none";
+            document.getElementById("loginLink").style.display = "none";
+            document.getElementById("logoutLink").style.display = "";
+
+            props.userCtx.currentUser = data;
+            props.setStatus("User " + email + " successfully created");
+            props.setShow(false);
+          }
+        } catch (err) {
+          props.setStatus(text);
+          console.log("err:", err + "data: " + text);
+        }
+      });
   }
 
   return (
