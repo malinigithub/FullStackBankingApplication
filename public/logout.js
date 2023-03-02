@@ -10,6 +10,7 @@ function Logout() {
     document.getElementById("loginLink").style.display = "";
     document.getElementById("logoutLink").style.display = "none";
     userCtx.currentUser = [, , ,];
+    Cookies.remove("bearerToken");
     message = "Signed Out Successfully";
     //console.log(userCtx.currentUser);
   } else {

@@ -1,16 +1,44 @@
 var express = require("express");
-var app = express();
 var cors = require("cors");
 var dal = require("./dal.js");
-const e = require("express");
+//var firebase = require("./firebase_setup");
 const swaggerUi = require("swagger-ui-express");
 const swaggerDocument = require("./swagger.json");
 //const authMiddleware = require("./auth");
+const bodyParser = require("body-parser");
+const jwt = require("jsonwebtoken");
 
+const accessTokenSecret = "somerandomaccesstoken";
+const refreshTokenSecret = "somerandomstringforrefreshtoken";
+const refreshTokens = [];
+
+const app = express();
 // used to serve static files from public directory
 app.use(express.static("public"));
 app.use(cors());
 //app.use(authMiddleware);
+
+app.use(bodyParser.json());
+
+const authenticateJWT = (req, res, next) => {
+  const authHeader = req.headers.authorization;
+  console.log(`Headers: ${JSON.stringify(req.headers)}`);
+  console.log(`Body: ${JSON.stringify(req.body)}`);
+  if (authHeader) {
+    const token = authHeader.split(" ")[1];
+
+    jwt.verify(token, accessTokenSecret, (err, user) => {
+      if (err) {
+        return res.sendStatus(403);
+      }
+
+      req.user = user;
+      next();
+    });
+  } else {
+    res.sendStatus(401);
+  }
+};
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
@@ -44,6 +72,7 @@ app.get("/account/create/:name/:email/:password", function (req, res) {
 });
 
 // login user
+
 app.get("/account/login/:email/:password", function (req, res) {
   dal.find(req.params.email).then((user) => {
     // if user exists, check password
@@ -59,6 +88,40 @@ app.get("/account/login/:email/:password", function (req, res) {
   });
 });
 
+app.get("/account/login/:email/:password", function (req, res) {
+  dal.find(req.params.email).then((user) => {
+    // if user exists, check password
+    if (user.length > 0) {
+      if (user[0].password === req.params.password) {
+        const accessToken = jwt.sign(
+          { username: user.username, role: user.role },
+          accessTokenSecret,
+          { expiresIn: "20m" }
+        );
+        const refreshToken = jwt.sign(
+          { username: user.username, role: user.role },
+          refreshTokenSecret
+        );
+
+        refreshTokens.push(refreshToken);
+        //token = "bearer_token=" + accessToken;
+        //document.cookie = token;
+        //document.co
+        currentUser = user[0];
+        res.json({
+          accessToken,
+          refreshToken,
+          user,
+        });
+        //res.send(user[0]);
+      } else {
+        res.send("Login failed: wrong password");
+      }
+    } else {
+      res.send("Login failed: user not found");
+    }
+  });
+});
 // find user account
 app.get("/account/find/:email", function (req, res) {
   dal.find(req.params.email).then((user) => {
@@ -76,7 +139,7 @@ app.get("/account/findOne/:email", function (req, res) {
 });
 
 // update - deposit/withdraw amount
-app.get("/account/update/:email/:amount", function (req, res) {
+app.get("/account/update/:email/:amount", authenticateJWT, function (req, res) {
   var amount = Number(parseFloat(req.params.amount).toFixed(2));
 
   dal.update(req.params.email, amount).then((response) => {
@@ -86,13 +149,13 @@ app.get("/account/update/:email/:amount", function (req, res) {
 });
 
 // all accounts
-app.get("/account/all", function (req, res) {
+app.get("/account/all", authenticateJWT, function (req, res) {
   dal.all().then((docs) => {
     console.log(docs);
     res.send(docs);
   });
 });
 
-var port = 3100;
-app.listen(process.env.PORT || port);
+var port = process.env.PORT || 4000;
+app.listen(port);
 console.log("Running on port: " + port);
