@@ -7,8 +7,10 @@ const swaggerDocument = require("./swagger.json");
 const bodyParser = require("body-parser");
 const jwt = require("jsonwebtoken");
 
-const accessTokenSecret = "somerandomaccesstoken";
-const refreshTokenSecret = "somerandomstringforrefreshtoken";
+const dotenv = require("dotenv");
+dotenv.config();
+const accessTokenSecret = process.env.ACCESSTOKENSECRET;
+const refreshTokenSecret = process.env.REFRESHTOKENSECRET;
 const refreshTokens = [];
 
 const app = express();
