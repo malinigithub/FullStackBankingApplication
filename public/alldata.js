@@ -1,14 +1,8 @@
 function AllData() {
   const [data, setData] = React.useState("");
-  //let cookie = document.cookie;
-  //console.log("cookie" + cookie);
-  //console.log("cookie" + cookie);
-  let bearerToken = Cookies.get("bearerToken");
-  console.log("bearatoken" + bearerToken);
 
-  //let jsonvalue = JSON.parse(cookie);
+  let bearerToken = Cookies.get("bearerToken");
   let token = "Bearer " + bearerToken;
-  console.log("token" + token);
 
   const options = {
     headers: {

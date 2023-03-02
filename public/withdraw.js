@@ -67,6 +67,14 @@ function WithdrawForm(props) {
   //const [email, setEmail] = React.useState("");
   const [amount, setAmount] = React.useState("");
   let email = props.userCtx.currentUser.email;
+  let bearerToken = Cookies.get("bearerToken");
+  let token = "Bearer " + bearerToken;
+
+  const options = {
+    headers: {
+      Authorization: token,
+    },
+  };
   let balanceAmount = props.userCtx.currentUser.balance;
   function handle() {
     if (amount <= 0) {
@@ -77,7 +85,7 @@ function WithdrawForm(props) {
       alert("Enter amount less than current balance");
       return false;
     }
-    fetch(`/account/update/${email}/-${amount}`)
+    fetch(`/account/update/${email}/-${amount}`, options)
       .then((response) => response.text())
       .then((text) => {
         try {

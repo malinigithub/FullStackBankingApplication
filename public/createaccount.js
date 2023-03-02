@@ -66,39 +66,32 @@ function CreateForm(props) {
       setTimeout(() => props.setStatus(""), 3000);
       return false;
     }
-    console.log(name, email, password);
-    console.log("mongoDB URL Directly included");
+    console.log(name, email);
     const url = `/account/create/${name}/${email}/${password}`;
     fetch(url)
       .then((response) => response.text())
       .then((text) => {
-        console.log("mongoDB URL Directly included");
-
         try {
-          //if (res.status === 403) {
           if (text === "User already exists") {
             props.setStatus("Error: User " + email + " already exists");
             alert("Error: User " + email + " already exists");
             setTimeout(() => props.setStatus(""), 3000);
             props.setShow(true);
           } else {
-            const data = JSON.parse(text);
+            let jsonvalue = JSON.parse(text);
+            Cookies.set("bearerToken", jsonvalue.accessToken);
 
-            console.log(data);
-            let userName = document.getElementById("userName");
-            userName.innerHTML = email;
-            //document.getElementById("logoutLink").classList.remove("disabled");
             document.getElementById("createAccountLink").style.display = "none";
             document.getElementById("loginLink").style.display = "none";
             document.getElementById("logoutLink").style.display = "";
 
-            props.userCtx.currentUser = data;
+            props.userCtx.currentUser = jsonvalue.user;
+            let userName = document.getElementById("userName");
+            userName.innerHTML = email;
             props.setStatus("User " + email + " successfully created");
             props.setShow(false);
           }
         } catch (err) {
-          console.log("ERROR FLOW mongoDB URL Directly included");
-
           props.setStatus(text);
           console.log("err:", err + "data: " + text);
         }

@@ -71,28 +71,20 @@ function LoginForm(props) {
       .then((response) => response.text())
       .then((text) => {
         try {
-          //let accessToken, refreshToken;
           console.log("text", text);
-          //const { accessToken, refreshToken, data } = JSON.parse(text);
           let jsonvalue = JSON.parse(text);
-          console.log("access token:" + jsonvalue.accessToken);
-          console.log("refresh token:" + jsonvalue.refreshToken);
 
           Cookies.set("bearerToken", jsonvalue.accessToken);
-          console.log("parse data:" + jsonvalue.user[0].email);
-          console.log("parse data user:" + jsonvalue.user[0]);
-          let userName = document.getElementById("userName");
-          userName.innerHTML = email;
-          //document.getElementById("logoutLink").classList.remove("disabled");
+
           document.getElementById("createAccountLink").style.display = "none";
           document.getElementById("loginLink").style.display = "none";
           document.getElementById("logoutLink").style.display = "";
 
           props.userCtx.currentUser = jsonvalue.user[0];
+          let userName = document.getElementById("userName");
+          userName.innerHTML = email;
           props.setStatus("");
           props.setShow(false);
-          //console.log("JSON:", data);
-          console.log("currentUser: ", props.userCtx.currentUser);
         } catch (err) {
           props.setStatus(text);
           console.log("err:", err + "data: " + text);

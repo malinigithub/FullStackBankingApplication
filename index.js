@@ -63,7 +63,26 @@ app.get("/account/create/:name/:email/:password", function (req, res) {
         .create(req.params.name, req.params.email, req.params.password)
         .then((user) => {
           console.log(user);
-          res.send(user);
+          const accessToken = jwt.sign(
+            { username: user.username, role: user.role },
+            accessTokenSecret,
+            { expiresIn: "20m" }
+          );
+          const refreshToken = jwt.sign(
+            { username: user.username, role: user.role },
+            refreshTokenSecret
+          );
+
+          refreshTokens.push(refreshToken);
+          //token = "bearer_token=" + accessToken;
+          //document.cookie = token;
+          //document.co
+          res.json({
+            accessToken,
+            refreshToken,
+            user,
+          });
+          //res.send(user);
         });
     }
   });
@@ -121,7 +140,7 @@ app.get("/account/login/:email/:password", function (req, res) {
   });
 });
 // find user account
-app.get("/account/find/:email", function (req, res) {
+app.get("/account/find/:email", authenticateJWT, function (req, res) {
   dal.find(req.params.email).then((user) => {
     console.log(user);
     res.send(user);
@@ -129,7 +148,7 @@ app.get("/account/find/:email", function (req, res) {
 });
 
 // find one user by email - alternative to find
-app.get("/account/findOne/:email", function (req, res) {
+app.get("/account/findOne/:email", authenticateJWT, function (req, res) {
   dal.findOne(req.params.email).then((user) => {
     console.log(user);
     res.send(user);
