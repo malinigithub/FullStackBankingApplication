@@ -37,13 +37,18 @@ function Login() {
 function LoginMsg(props) {
   console.log("currentUser: ", props.userCtx.currentUser);
 
+  function authenticateAgain() {
+    props.setShow(true);
+    auth.signOut();
+    Logout();
+  }
   return (
     <>
       <h5>Success</h5>
       <button
         type="submit"
         className="btn btn-light"
-        onClick={() => props.setShow(true)}
+        onClick={authenticateAgain}
       >
         Authenticate again
       </button>
@@ -114,7 +119,6 @@ function LoginForm(props) {
         // The signed-in user info
         const user = result.user;
         console.log(user);
-        console.log(firebaseUser.email);
       })
       .catch((error) => {
         //Handle Errors here
@@ -139,12 +143,20 @@ function LoginForm(props) {
       );
 
       googlelogin.style.display = "none";
+      let userName = document.getElementById("userName");
+      userName.innerHTML = email;
+      //document.getElementById("logoutLink").classList.remove("disabled");
+      document.getElementById("createAccountLink").style.display = "none";
+      document.getElementById("loginLink").style.display = "none";
+      document.getElementById("logoutLink").style.display = "";
+      props.setStatus("");
+      props.setShow(false);
     } else {
       console.log("User is not logged in");
-      loggedInStatus.innerText = "You are not yet logged in";
+      //loggedInStatus.innerText = "You are not yet logged in";
 
       googlelogin.style.display = "inline";
-      password.style.display = "inline";
+      //password.style.display = "inline";
       logout.style.display = "none";
     }
   });

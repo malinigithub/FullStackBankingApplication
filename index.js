@@ -1,7 +1,6 @@
 var express = require("express");
 var cors = require("cors");
 var dal = require("./dal.js");
-//var firebase = require("./firebase_setup");
 const swaggerUi = require("swagger-ui-express");
 const swaggerDocument = require("./swagger.json");
 //const authMiddleware = require("./auth");
@@ -16,7 +15,6 @@ const app = express();
 // used to serve static files from public directory
 app.use(express.static("public"));
 app.use(cors());
-//app.use(authMiddleware);
 
 app.use(bodyParser.json());
 
@@ -72,7 +70,7 @@ app.get("/account/create/:name/:email/:password", function (req, res) {
 });
 
 // login user
-
+/*
 app.get("/account/login/:email/:password", function (req, res) {
   dal.find(req.params.email).then((user) => {
     // if user exists, check password
@@ -86,7 +84,7 @@ app.get("/account/login/:email/:password", function (req, res) {
       res.send("Login failed: user not found");
     }
   });
-});
+});*/
 
 app.get("/account/login/:email/:password", function (req, res) {
   dal.find(req.params.email).then((user) => {
