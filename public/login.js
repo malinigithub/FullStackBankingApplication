@@ -8,7 +8,7 @@ const firebaseConfig = {
 };
 const app = firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
-console.log("auth ", firebase.auth());
+
 function Login() {
   const [show, setShow] = React.useState(true);
   const [status, setStatus] = React.useState("");
@@ -73,7 +73,7 @@ function LoginForm(props) {
       .then((response) => response.text())
       .then((text) => {
         try {
-          console.log("text", text);
+          //console.log("text", text);
           let jsonvalue = JSON.parse(text);
 
           Cookies.set("bearerToken", jsonvalue.accessToken);
@@ -112,10 +112,7 @@ function LoginForm(props) {
         const user = result.user;
         googleemail = user.email;
         googleDisplayName = user.displayName;
-        console.log(
-          "token after google login: ",
-          result.credential.accessToken
-        );
+
         //setEmail(googlemail);
         //console.log("user after google login: set emai:  ", email);
         fetch(`/account/googlelogin/${googleemail}/${googleDisplayName}`)
@@ -132,15 +129,10 @@ function LoginForm(props) {
                 "none";
               document.getElementById("loginLink").style.display = "none";
               document.getElementById("logoutLink").style.display = "";
-              console.log("before setting globalUserCtx");
+              // console.log("before setting globalUserCtx");
 
               //userContext = jsonvalue.foundUser;
               props.userCtx.currentUser = jsonvalue.foundUser;
-              //console.log("after current user extraction", userContext);
-              console.log(
-                "after current user extraction props.userCtx.currentUser",
-                props.userCtx.currentUser
-              );
 
               let userName = document.getElementById("userName");
               userName.innerHTML = googleemail;
@@ -154,7 +146,7 @@ function LoginForm(props) {
       })
       .catch((error) => {
         //Handle Errors here
-        console.log("google sign in clicked== ERROR flow");
+        //console.log("google sign in clicked== ERROR flow");
 
         const errorCode = error.code;
         const errorMessage = error.messagingSenderId;

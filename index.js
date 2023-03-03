@@ -111,7 +111,6 @@ app.get("/account/login/:email/:password", function (req, res) {
   dal.find(req.params.email, "pwd").then((user) => {
     // if user exists, check password
     if (user.length > 0) {
-      console.log("user password", user[0].password);
       if (user[0].password === req.params.password) {
         const accessToken = jwt.sign(
           { useremail: req.params.email, role: user.role },
@@ -174,7 +173,7 @@ app.get("/account/googlelogin/:email/:name", function (req, res) {
       });
       // res.send(user);
     } else {
-      console.log("Login failed: user not found, creating user ");
+      console.log("Login: user not found, creating user ");
       dal
         .createExternalAccount(
           "external",
