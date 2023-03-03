@@ -140,7 +140,7 @@ app.get("/account/login/:email/:password", function (req, res) {
 });
 
 //google login flow:
-app.get("/account/googlelogin/:email", function (req, res) {
+app.get("/account/googlelogin/:email/:name", function (req, res) {
   //console.log("googleLogin in index.js");
   dal.find(req.params.email, "external").then((user) => {
     let foundUser;
@@ -150,12 +150,18 @@ app.get("/account/googlelogin/:email", function (req, res) {
       //console.log("user found? :", user[0].email);
       foundUser = user[0];
       const accessToken = jwt.sign(
-        { useremail: req.params.email, role: user.role },
+        {
+          useremail: req.params.email,
+          role: user.role,
+        },
         accessTokenSecret,
         { expiresIn: "20m" }
       );
       const refreshToken = jwt.sign(
-        { useremail: req.params.email, role: user.role },
+        {
+          useremail: req.params.email,
+          role: user.role,
+        },
         refreshTokenSecret
       );
 
@@ -181,12 +187,18 @@ app.get("/account/googlelogin/:email", function (req, res) {
           foundUser = user;
 
           const accessToken = jwt.sign(
-            { useremail: req.params.email, role: user.role },
+            {
+              useremail: req.params.email,
+              role: user.role,
+            },
             accessTokenSecret,
             { expiresIn: "20m" }
           );
           const refreshToken = jwt.sign(
-            { useremail: req.params.email, role: user.role },
+            {
+              useremail: req.params.email,
+              role: user.role,
+            },
             refreshTokenSecret
           );
 

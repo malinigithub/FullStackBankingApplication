@@ -113,16 +113,16 @@ function LoginForm(props) {
         googleemail = user.email;
         googleDisplayName = user.displayName;
         console.log(
-          "googleDisplayName after google login: ",
-          googleDisplayName
+          "token after google login: ",
+          result.credential.accessToken
         );
         //setEmail(googlemail);
         //console.log("user after google login: set emai:  ", email);
-        fetch(`/account/googlelogin/${googleemail}`)
+        fetch(`/account/googlelogin/${googleemail}/${googleDisplayName}`)
           .then((response) => response.text())
           .then((text) => {
             try {
-              console.log("fetch googlelogin in signup call");
+              //console.log("fetch googlelogin in signup call");
 
               let jsonvalue = JSON.parse(text);
 
