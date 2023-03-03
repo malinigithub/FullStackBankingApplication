@@ -1,8 +1,7 @@
-let userContext = React.useContext(UserContext);
-
 function Withdraw() {
   const [show, setShow] = React.useState(true);
   const [status, setStatus] = React.useState("");
+  let userCtx = React.useContext(UserContext);
 
   return (
     <Card
@@ -10,11 +9,19 @@ function Withdraw() {
       header="Withdraw"
       status={status}
       body={
-        userContext.email ? (
+        userCtx.currentUser.email ? (
           show ? (
-            <WithdrawForm setShow={setShow} setStatus={setStatus} />
+            <WithdrawForm
+              setShow={setShow}
+              setStatus={setStatus}
+              userCtx={userCtx}
+            />
           ) : (
-            <WithdrawMsg setShow={setShow} setStatus={setStatus} />
+            <WithdrawMsg
+              setShow={setShow}
+              setStatus={setStatus}
+              userCtx={userCtx}
+            />
           )
         ) : (
           <>
@@ -41,7 +48,7 @@ function WithdrawMsg(props) {
   return (
     <>
       <h5>Success</h5>
-      <b>Final Balance: {userContext.balance}</b>
+      <b>Final Balance: {props.userCtx.currentUser.balance}</b>
       <button
         type="submit"
         className="btn btn-light"
@@ -59,7 +66,9 @@ function WithdrawMsg(props) {
 function WithdrawForm(props) {
   //const [email, setEmail] = React.useState("");
   const [amount, setAmount] = React.useState("");
-  let email = userContext.email;
+  let email = props.userCtx.currentUser.email;
+  let authType = props.userCtx.currentUser.authType;
+
   let bearerToken = Cookies.get("bearerToken");
   let token = "Bearer " + bearerToken;
 
@@ -68,7 +77,7 @@ function WithdrawForm(props) {
       Authorization: token,
     },
   };
-  let balanceAmount = userContext.balance;
+  let balanceAmount = props.userCtx.currentUser.balance;
   function handle() {
     if (amount <= 0) {
       alert("Enter a positive number");
@@ -78,12 +87,12 @@ function WithdrawForm(props) {
       alert("Enter amount less than current balance");
       return false;
     }
-    fetch(`/account/update/${email}/-${amount}`, options)
+    fetch(`/account/update/${authType}/${email}/-${amount}`, options)
       .then((response) => response.text())
       .then((text) => {
         try {
           const data = JSON.parse(text);
-          userContext.balance = data.value.balance;
+          props.userCtx.currentUser.balance = data.value.balance;
           props.setStatus(JSON.stringify(data.value));
           props.setShow(false);
           console.log("JSON:", data);
@@ -96,7 +105,7 @@ function WithdrawForm(props) {
 
   return (
     <>
-      <b>Current Balance: {userContext.balance}</b>
+      <b>Current Balance: {props.userCtx.currentUser.balance}</b>
       <br />
       <br />
       Enter Amount to Withdraw:

@@ -12,6 +12,10 @@ function Logout() {
     userCtx.currentUser = [, , ,];
     Cookies.remove("bearerToken");
     message = "Signed Out Successfully";
+    //console.log("logout auth ", firebase.auth());
+
+    firebase.auth().signOut();
+
     //console.log(userCtx.currentUser);
   } else {
     message = "No logged in user to signout";

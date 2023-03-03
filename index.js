@@ -59,12 +59,13 @@ app.get("/account/create/:name/:email/:password", function (req, res) {
       res.send("User already exists");
     } else {
       // else create user
+
       dal
         .create(
           "pwd",
           req.params.email,
           "member",
-          req.params.email,
+          req.params.name,
           req.params.password
         )
         .then((user) => {
@@ -110,6 +111,7 @@ app.get("/account/login/:email/:password", function (req, res) {
   dal.find(req.params.email, "pwd").then((user) => {
     // if user exists, check password
     if (user.length > 0) {
+      console.log("user password", user[0].password);
       if (user[0].password === req.params.password) {
         const accessToken = jwt.sign(
           { useremail: req.params.email, role: user.role },
@@ -139,13 +141,13 @@ app.get("/account/login/:email/:password", function (req, res) {
 
 //google login flow:
 app.get("/account/googlelogin/:email", function (req, res) {
-  console.log("googleLogin in index.js");
+  //console.log("googleLogin in index.js");
   dal.find(req.params.email, "external").then((user) => {
     let foundUser;
 
     // if user exists, check password
     if (user.length > 0) {
-      console.log("user found? :", user[0].email);
+      //console.log("user found? :", user[0].email);
       foundUser = user[0];
       const accessToken = jwt.sign(
         { useremail: req.params.email, role: user.role },
@@ -168,7 +170,12 @@ app.get("/account/googlelogin/:email", function (req, res) {
     } else {
       console.log("Login failed: user not found, creating user ");
       dal
-        .create("external", req.params.email, "member", req.params.name)
+        .createExternalAccount(
+          "external",
+          req.params.email,
+          "member",
+          req.params.name
+        )
         .then((user) => {
           console.log(user);
           foundUser = user;
@@ -199,7 +206,7 @@ app.get("/account/googlelogin/:email", function (req, res) {
 app.get("/account/find/:email", authenticateJWT, function (req, res) {
   const { useremail, role } = req.user;
   if (useremail === req.params.email) {
-    dal.find(req.params.email).then((user) => {
+    dal.find(req.params.email, "pwd").then((user) => {
       console.log(user);
       res.send(user);
     });
@@ -213,7 +220,7 @@ app.get("/account/findOne/:email", authenticateJWT, function (req, res) {
   const { useremail, role } = req.user;
 
   if (useremail === req.params.email) {
-    dal.findOne(req.params.email).then((user) => {
+    dal.findOne(req.params.email, "pwd").then((user) => {
       console.log(user);
       res.send(user);
     });
@@ -223,21 +230,27 @@ app.get("/account/findOne/:email", authenticateJWT, function (req, res) {
 });
 
 // update - deposit/withdraw amount
-app.get("/account/update/:email/:amount", authenticateJWT, function (req, res) {
-  const { useremail, role } = req.user;
-  //console.log("user", useremail);
+app.get(
+  "/account/update/:authType/:email/:amount",
+  authenticateJWT,
+  function (req, res) {
+    const { useremail, role } = req.user;
+    //console.log("user", useremail);
 
-  if (useremail === req.params.email) {
-    var amount = Number(parseFloat(req.params.amount).toFixed(2));
+    if (useremail === req.params.email) {
+      var amount = Number(parseFloat(req.params.amount).toFixed(2));
 
-    dal.update(req.params.email, amount).then((response) => {
-      console.log(response);
-      res.send(response);
-    });
-  } else {
-    res.sendStatus(403);
+      dal
+        .update(req.params.authType, req.params.email, amount)
+        .then((response) => {
+          console.log(response);
+          res.send(response);
+        });
+    } else {
+      res.sendStatus(403);
+    }
   }
-});
+);
 
 // all accounts
 app.get("/account/all", authenticateJWT, function (req, res) {

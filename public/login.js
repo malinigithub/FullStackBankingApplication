@@ -8,8 +8,7 @@ const firebaseConfig = {
 };
 const app = firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
-//let userContext = React.useContext(UserContext);
-
+console.log("auth ", firebase.auth());
 function Login() {
   const [show, setShow] = React.useState(true);
   const [status, setStatus] = React.useState("");
@@ -40,6 +39,8 @@ function LoginMsg(props) {
 
   function authenticateAgain() {
     props.setShow(true);
+    Cookies.remove("bearerToken");
+
     auth.signOut();
     //Logout();
   }
@@ -167,7 +168,7 @@ function LoginForm(props) {
       });
     // console.log("end of googlelogin  function", props.userCtx.currentUser);
   }
-  auth.onAuthStateChanged((firebaseUser) => {
+  /*   auth.onAuthStateChanged((firebaseUser) => {
     if (firebaseUser) {
       console.log(
         `You are logged in using the following email: ${firebaseUser.email}`
@@ -178,7 +179,7 @@ function LoginForm(props) {
     } else {
       console.log("User is not logged in");
     }
-  });
+  }); */
 
   return (
     <>
@@ -204,7 +205,8 @@ function LoginForm(props) {
       <br />
       <button type="submit" className="btn btn-light" onClick={handle}>
         Login
-      </button>
+      </button>{" "}
+      &nbsp;
       <button
         id="googlelogin"
         className="btn btn-light"

@@ -3,7 +3,7 @@
 function Deposit() {
   const [show, setShow] = React.useState(true);
   const [status, setStatus] = React.useState("");
-  console.log("globalUserCtx inside deposit:", userContext);
+  //console.log("globalUserCtx inside deposit:", userContext);
   let userCtx = React.useContext(UserContext);
 
   return (
@@ -71,6 +71,7 @@ function DepositForm(props) {
   //const [email, setEmail] = React.useState("");
   const [amount, setAmount] = React.useState("");
   let email = props.userCtx.currentUser.email;
+  let authType = props.userCtx.currentUser.authType;
   let bearerToken = Cookies.get("bearerToken");
   let token = "Bearer " + bearerToken;
 
@@ -86,7 +87,7 @@ function DepositForm(props) {
 
       return false;
     }
-    fetch(`/account/update/${email}/${amount}`, options)
+    fetch(`/account/update/${authType}/${email}/${amount}`, options)
       .then((response) => response.text())
       .then((text) => {
         try {

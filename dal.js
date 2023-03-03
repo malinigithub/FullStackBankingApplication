@@ -24,7 +24,7 @@ function create(authType, email, userrole, name, password) {
   });
 }
 // create user account
-function create(authType, email, userrole, name) {
+function createExternalAccount(authType, email, userrole, name) {
   return new Promise((resolve, reject) => {
     const collection = db.collection("users");
     const doc = { authType, email, userrole, name, balance: 0 };
@@ -68,12 +68,12 @@ function findOne(email) {
 }
 
 // update - deposit/withdraw amount
-function update(email, amount) {
+function update(authType, email, amount) {
   return new Promise((resolve, reject) => {
     const customers = db
       .collection("users")
       .findOneAndUpdate(
-        { email: email },
+        { authType: authType, email: email },
         { $inc: { balance: amount } },
         { returnOriginal: false },
         function (err, documents) {
@@ -95,4 +95,4 @@ function all() {
   });
 }
 
-module.exports = { create, findOne, find, update, all };
+module.exports = { create, createExternalAccount, findOne, find, update, all };
