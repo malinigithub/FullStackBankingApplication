@@ -10,12 +10,12 @@ function Balance() {
       header="Balance"
       status={status}
       body={
-        userCtx.email ? (
+        userCtx.currentUser.email ? (
           <>
             <h3>
               Welcome <b>{userCtx.currentUser.email}</b>
             </h3>
-            You have ${currentUser.balance} in your account
+            You have ${userCtx.currentUser.balance} in your account
           </>
         ) : (
           <b>

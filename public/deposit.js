@@ -1,9 +1,10 @@
-let userContext = React.useContext(UserContext);
+//let userContext = React.useContext(UserContext);
 
 function Deposit() {
   const [show, setShow] = React.useState(true);
   const [status, setStatus] = React.useState("");
   console.log("globalUserCtx inside deposit:", userContext);
+  let userCtx = React.useContext(UserContext);
 
   return (
     <Card
@@ -11,11 +12,19 @@ function Deposit() {
       header="Deposit"
       status={status}
       body={
-        userContext.email ? (
+        userCtx.currentUser.email ? (
           show ? (
-            <DepositForm setShow={setShow} setStatus={setStatus} />
+            <DepositForm
+              setShow={setShow}
+              setStatus={setStatus}
+              userCtx={userCtx}
+            />
           ) : (
-            <DepositMsg setShow={setShow} setStatus={setStatus} />
+            <DepositMsg
+              setShow={setShow}
+              setStatus={setStatus}
+              userCtx={userCtx}
+            />
           )
         ) : (
           <>
@@ -42,7 +51,7 @@ function DepositMsg(props) {
   return (
     <>
       <h5>Success</h5>
-      <b>Final Balance: {userContext.balance}</b>
+      <b>Final Balance: {props.userCtx.currentUser.balance}</b>
       <br />
       <button
         type="submit"
@@ -61,7 +70,7 @@ function DepositMsg(props) {
 function DepositForm(props) {
   //const [email, setEmail] = React.useState("");
   const [amount, setAmount] = React.useState("");
-  let email = userContext.email;
+  let email = props.userCtx.currentUser.email;
   let bearerToken = Cookies.get("bearerToken");
   let token = "Bearer " + bearerToken;
 
@@ -82,7 +91,7 @@ function DepositForm(props) {
       .then((text) => {
         try {
           const data = JSON.parse(text);
-          userContext.balance = data.value.balance;
+          props.userCtx.currentUser.balance = data.value.balance;
           props.setStatus(JSON.stringify(data.value));
           props.setShow(false);
           console.log("JSON:", data);
@@ -95,7 +104,7 @@ function DepositForm(props) {
 
   return (
     <>
-      <b>Current Balance: {userContext.balance}</b>
+      <b>Current Balance: {props.userCtx.currentUser.balance}</b>
       <br />
       <br />
       Enter Amount to Deposit:

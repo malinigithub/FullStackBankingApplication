@@ -3,7 +3,7 @@ function Logout() {
   //console.log(userCtx.currentUser);
   let message;
 
-  if (userCtx.currentUser.name) {
+  if (userCtx.currentUser.email) {
     let userName = document.getElementById("userName");
     userName.innerHTML = "";
     document.getElementById("createAccountLink").style.display = "";

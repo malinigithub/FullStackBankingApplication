@@ -8,7 +8,7 @@ const firebaseConfig = {
 };
 const app = firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
-let userContext = React.useContext(UserContext);
+//let userContext = React.useContext(UserContext);
 
 function Login() {
   const [show, setShow] = React.useState(true);
@@ -133,11 +133,12 @@ function LoginForm(props) {
               document.getElementById("logoutLink").style.display = "";
               console.log("before setting globalUserCtx");
 
-              userContext = jsonvalue.foundUser;
-              console.log("after current user extraction", userContext);
+              //userContext = jsonvalue.foundUser;
+              props.userCtx.currentUser = jsonvalue.foundUser;
+              //console.log("after current user extraction", userContext);
               console.log(
-                "after current user extraction .currentUser",
-                userContext.currentUser
+                "after current user extraction props.userCtx.currentUser",
+                props.userCtx.currentUser
               );
 
               let userName = document.getElementById("userName");
