@@ -93,9 +93,9 @@ function WithdrawForm(props) {
         try {
           const data = JSON.parse(text);
           props.userCtx.currentUser.balance = data.value.balance;
-          props.setStatus(JSON.stringify(data.value));
+          props.setStatus("Withdrawal Completed");
           props.setShow(false);
-          console.log("JSON:", data);
+          //console.log("JSON:", data);
         } catch (err) {
           props.setStatus("Withdrawal failed");
           console.log("err:", text);

@@ -93,9 +93,9 @@ function DepositForm(props) {
         try {
           const data = JSON.parse(text);
           props.userCtx.currentUser.balance = data.value.balance;
-          props.setStatus(JSON.stringify(data.value));
+          props.setStatus("Deposit Completed");
           props.setShow(false);
-          console.log("JSON:", data);
+          //console.log("JSON:", data);
         } catch (err) {
           props.setStatus("Deposit failed");
           console.log("err:", text);
