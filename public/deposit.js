@@ -1,7 +1,9 @@
+let userContext = React.useContext(UserContext);
+
 function Deposit() {
   const [show, setShow] = React.useState(true);
   const [status, setStatus] = React.useState("");
-  let userCtx = React.useContext(UserContext);
+  console.log("globalUserCtx inside deposit:", userContext);
 
   return (
     <Card
@@ -9,19 +11,11 @@ function Deposit() {
       header="Deposit"
       status={status}
       body={
-        userCtx.currentUser.name ? (
+        userContext.email ? (
           show ? (
-            <DepositForm
-              setShow={setShow}
-              setStatus={setStatus}
-              userCtx={userCtx}
-            />
+            <DepositForm setShow={setShow} setStatus={setStatus} />
           ) : (
-            <DepositMsg
-              setShow={setShow}
-              setStatus={setStatus}
-              userCtx={userCtx}
-            />
+            <DepositMsg setShow={setShow} setStatus={setStatus} />
           )
         ) : (
           <>
@@ -48,7 +42,7 @@ function DepositMsg(props) {
   return (
     <>
       <h5>Success</h5>
-      <b>Final Balance: {props.userCtx.currentUser.balance}</b>
+      <b>Final Balance: {userContext.balance}</b>
       <br />
       <button
         type="submit"
@@ -67,7 +61,7 @@ function DepositMsg(props) {
 function DepositForm(props) {
   //const [email, setEmail] = React.useState("");
   const [amount, setAmount] = React.useState("");
-  let email = props.userCtx.currentUser.email;
+  let email = userContext.email;
   let bearerToken = Cookies.get("bearerToken");
   let token = "Bearer " + bearerToken;
 
@@ -88,7 +82,7 @@ function DepositForm(props) {
       .then((text) => {
         try {
           const data = JSON.parse(text);
-          props.userCtx.currentUser.balance = data.value.balance;
+          userContext.balance = data.value.balance;
           props.setStatus(JSON.stringify(data.value));
           props.setShow(false);
           console.log("JSON:", data);
@@ -101,7 +95,7 @@ function DepositForm(props) {
 
   return (
     <>
-      <b>Current Balance: {props.userCtx.currentUser.balance}</b>
+      <b>Current Balance: {userContext.balance}</b>
       <br />
       <br />
       Enter Amount to Deposit:

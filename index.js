@@ -44,15 +44,14 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 // create user account
 app.get("/account/create/:name/:email/:password", function (req, res) {
   // check if account exists
-  console.log("mongoDB changes included");
-  console.log("inside index.js file");
+
   if (!req.params.email.includes("@") || !req.params.email.includes(".")) {
     res.send("Error: Enter valid email id");
   }
   if (req.params.password.length < 8) {
     res.send("Error: Password must be 8 characters");
   }
-  dal.find(req.params.email).then((users) => {
+  dal.find(req.params.email, "pwd").then((users) => {
     // if user exists, return error message
     if (users.length > 0) {
       console.log("User already exists");
@@ -61,7 +60,13 @@ app.get("/account/create/:name/:email/:password", function (req, res) {
     } else {
       // else create user
       dal
-        .create(req.params.name, req.params.email, req.params.password)
+        .create(
+          "pwd",
+          req.params.email,
+          "member",
+          req.params.email,
+          req.params.password
+        )
         .then((user) => {
           console.log(user);
           const accessToken = jwt.sign(
@@ -102,7 +107,7 @@ app.get("/account/login/:email/:password", function (req, res) {
 });*/
 
 app.get("/account/login/:email/:password", function (req, res) {
-  dal.find(req.params.email).then((user) => {
+  dal.find(req.params.email, "pwd").then((user) => {
     // if user exists, check password
     if (user.length > 0) {
       if (user[0].password === req.params.password) {
@@ -128,6 +133,65 @@ app.get("/account/login/:email/:password", function (req, res) {
       }
     } else {
       res.send("Login failed: user not found");
+    }
+  });
+});
+
+//google login flow:
+app.get("/account/googlelogin/:email", function (req, res) {
+  console.log("googleLogin in index.js");
+  dal.find(req.params.email, "external").then((user) => {
+    let foundUser;
+
+    // if user exists, check password
+    if (user.length > 0) {
+      console.log("user found? :", user[0].email);
+      foundUser = user[0];
+      const accessToken = jwt.sign(
+        { useremail: req.params.email, role: user.role },
+        accessTokenSecret,
+        { expiresIn: "20m" }
+      );
+      const refreshToken = jwt.sign(
+        { useremail: req.params.email, role: user.role },
+        refreshTokenSecret
+      );
+
+      refreshTokens.push(refreshToken);
+
+      res.json({
+        accessToken,
+        refreshToken,
+        foundUser,
+      });
+      // res.send(user);
+    } else {
+      console.log("Login failed: user not found, creating user ");
+      dal
+        .create("external", req.params.email, "member", req.params.name)
+        .then((user) => {
+          console.log(user);
+          foundUser = user;
+
+          const accessToken = jwt.sign(
+            { useremail: req.params.email, role: user.role },
+            accessTokenSecret,
+            { expiresIn: "20m" }
+          );
+          const refreshToken = jwt.sign(
+            { useremail: req.params.email, role: user.role },
+            refreshTokenSecret
+          );
+
+          refreshTokens.push(refreshToken);
+
+          res.json({
+            accessToken,
+            refreshToken,
+            foundUser,
+          });
+          // res.send(user);
+        });
     }
   });
 });

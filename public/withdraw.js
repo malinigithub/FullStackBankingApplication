@@ -1,7 +1,8 @@
+let userContext = React.useContext(UserContext);
+
 function Withdraw() {
   const [show, setShow] = React.useState(true);
   const [status, setStatus] = React.useState("");
-  let userCtx = React.useContext(UserContext);
 
   return (
     <Card
@@ -9,19 +10,11 @@ function Withdraw() {
       header="Withdraw"
       status={status}
       body={
-        userCtx.currentUser.name ? (
+        userContext.email ? (
           show ? (
-            <WithdrawForm
-              setShow={setShow}
-              setStatus={setStatus}
-              userCtx={userCtx}
-            />
+            <WithdrawForm setShow={setShow} setStatus={setStatus} />
           ) : (
-            <WithdrawMsg
-              setShow={setShow}
-              setStatus={setStatus}
-              userCtx={userCtx}
-            />
+            <WithdrawMsg setShow={setShow} setStatus={setStatus} />
           )
         ) : (
           <>
@@ -48,7 +41,7 @@ function WithdrawMsg(props) {
   return (
     <>
       <h5>Success</h5>
-      <b>Final Balance: {props.userCtx.currentUser.balance}</b>
+      <b>Final Balance: {userContext.balance}</b>
       <button
         type="submit"
         className="btn btn-light"
@@ -66,7 +59,7 @@ function WithdrawMsg(props) {
 function WithdrawForm(props) {
   //const [email, setEmail] = React.useState("");
   const [amount, setAmount] = React.useState("");
-  let email = props.userCtx.currentUser.email;
+  let email = userContext.email;
   let bearerToken = Cookies.get("bearerToken");
   let token = "Bearer " + bearerToken;
 
@@ -75,7 +68,7 @@ function WithdrawForm(props) {
       Authorization: token,
     },
   };
-  let balanceAmount = props.userCtx.currentUser.balance;
+  let balanceAmount = userContext.balance;
   function handle() {
     if (amount <= 0) {
       alert("Enter a positive number");
@@ -90,12 +83,12 @@ function WithdrawForm(props) {
       .then((text) => {
         try {
           const data = JSON.parse(text);
-          props.userCtx.currentUser.balance = data.value.balance;
+          userContext.balance = data.value.balance;
           props.setStatus(JSON.stringify(data.value));
           props.setShow(false);
           console.log("JSON:", data);
         } catch (err) {
-          props.setStatus("Deposit failed");
+          props.setStatus("Withdrawal failed");
           console.log("err:", text);
         }
       });
@@ -103,7 +96,7 @@ function WithdrawForm(props) {
 
   return (
     <>
-      <b>Current Balance: {props.userCtx.currentUser.balance}</b>
+      <b>Current Balance: {userContext.balance}</b>
       <br />
       <br />
       Enter Amount to Withdraw:

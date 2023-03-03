@@ -7,9 +7,11 @@ function Spa() {
             currentUser: [
               {
                 _id: "",
-                name: "",
+                authType: "pwd",
                 email: "",
+                userrole: "",
                 password: "",
+                name: "",
                 balance: 0,
               },
             ],

@@ -1,16 +1,19 @@
 function Balance() {
   const userCtx = React.useContext(UserContext);
+  console.log("userContext inside balance", userCtx);
   const currentUser = userCtx.currentUser;
+  console.log("userContext.currentuser inside balance", userCtx.currentUser);
+
   return (
     <Card
       bgcolor="info"
       header="Balance"
       status={status}
       body={
-        currentUser.name ? (
+        userCtx.email ? (
           <>
             <h3>
-              Welcome <b>{userCtx.currentUser.name}</b>
+              Welcome <b>{userCtx.currentUser.email}</b>
             </h3>
             You have ${currentUser.balance} in your account
           </>

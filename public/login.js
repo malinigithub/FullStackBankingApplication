@@ -8,6 +8,7 @@ const firebaseConfig = {
 };
 const app = firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
+let userContext = React.useContext(UserContext);
 
 function Login() {
   const [show, setShow] = React.useState(true);
@@ -35,12 +36,12 @@ function Login() {
 }
 
 function LoginMsg(props) {
-  console.log("currentUser: ", props.userCtx.currentUser);
+  //console.log("currentUser: ", globalUserCtx.currentUser);
 
   function authenticateAgain() {
     props.setShow(true);
     auth.signOut();
-    Logout();
+    //Logout();
   }
   return (
     <>
@@ -93,24 +94,61 @@ function LoginForm(props) {
   }
   function googleLoginHandle() {
     const provider = new firebase.auth.GoogleAuthProvider();
-    console.log("google sign in clicked");
+    //    console.log("google sign in clicked");
+    let googleemail;
+    let googleDisplayName;
 
     firebase
       .auth()
       .signInWithPopup(provider)
       .then((result) => {
         //this gives you a google Access Token. You can use it to access the Google API
-        console.log("google sign in clicked2");
+        //console.log("google sign in clicked2");
 
         const credential = result.credential;
-        console.log("google sign in clicked3");
-
         const token = credential.accesstoken;
-        console.log("google sign in clicked24");
-
         // The signed-in user info
         const user = result.user;
-        console.log(user);
+        googleemail = user.email;
+        googleDisplayName = user.displayName;
+        console.log(
+          "googleDisplayName after google login: ",
+          googleDisplayName
+        );
+        //setEmail(googlemail);
+        //console.log("user after google login: set emai:  ", email);
+        fetch(`/account/googlelogin/${googleemail}`)
+          .then((response) => response.text())
+          .then((text) => {
+            try {
+              console.log("fetch googlelogin in signup call");
+
+              let jsonvalue = JSON.parse(text);
+
+              Cookies.set("bearerToken", jsonvalue.accessToken);
+
+              document.getElementById("createAccountLink").style.display =
+                "none";
+              document.getElementById("loginLink").style.display = "none";
+              document.getElementById("logoutLink").style.display = "";
+              console.log("before setting globalUserCtx");
+
+              userContext = jsonvalue.foundUser;
+              console.log("after current user extraction", userContext);
+              console.log(
+                "after current user extraction .currentUser",
+                userContext.currentUser
+              );
+
+              let userName = document.getElementById("userName");
+              userName.innerHTML = googleemail;
+              props.setStatus("");
+              props.setShow(false);
+            } catch (err) {
+              props.setStatus(text);
+              console.log("err:", err + "data: " + text);
+            }
+          });
       })
       .catch((error) => {
         //Handle Errors here
@@ -126,30 +164,18 @@ function LoginForm(props) {
 
         console.log(error, errorCode, errorMessage, email);
       });
+    // console.log("end of googlelogin  function", props.userCtx.currentUser);
   }
   auth.onAuthStateChanged((firebaseUser) => {
     if (firebaseUser) {
-      console.log(firebaseUser);
       console.log(
         `You are logged in using the following email: ${firebaseUser.email}`
       );
 
-      googlelogin.style.display = "none";
-      let userName = document.getElementById("userName");
-      userName.innerHTML = email;
-      //document.getElementById("logoutLink").classList.remove("disabled");
-      document.getElementById("createAccountLink").style.display = "none";
-      document.getElementById("loginLink").style.display = "none";
-      document.getElementById("logoutLink").style.display = "";
       props.setStatus("");
       props.setShow(false);
     } else {
       console.log("User is not logged in");
-      //loggedInStatus.innerText = "You are not yet logged in";
-
-      googlelogin.style.display = "inline";
-      //password.style.display = "inline";
-      logout.style.display = "none";
     }
   });
 
