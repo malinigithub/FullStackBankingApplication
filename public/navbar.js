@@ -65,9 +65,11 @@ function NavBar() {
               data-toggle="tooltip"
               data-placement="bottom"
               title="View allData"
+              id="allDataLink"
               href="#/alldata/"
+              style={{ display: "none" }}
             >
-              AllData
+              All Data
             </a>
           </li>
         </ul>

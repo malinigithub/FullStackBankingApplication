@@ -28,13 +28,27 @@ function CreateAccount() {
 }
 
 function CreateMsg(props) {
+  function addAnotherAccount() {
+    props.setShow(true);
+    Cookies.remove("bearerToken");
+    Cookies.remove("gToken");
+    auth.signOut();
+    userName.innerHTML = "";
+    document.getElementById("createAccountLink").style.display = "";
+    document.getElementById("loginLink").style.display = "";
+    document.getElementById("logoutLink").style.display = "none";
+    document.getElementById("allDataLink").style.display = "none";
+
+    props.userCtx.currentUser = [, , ,];
+    //console.log("reauth logout: ", props.userCtx.currentUser);
+  }
   return (
     <>
       <h5>Success</h5>
       <button
         type="submit"
         className="btn btn-light"
-        onClick={() => props.setShow(true)}
+        onClick={addAnotherAccount}
       >
         Add another account
       </button>
@@ -86,13 +100,18 @@ function CreateForm(props) {
             document.getElementById("logoutLink").style.display = "";
 
             props.userCtx.currentUser = jsonvalue.user;
+            if (props.userCtx.currentUser.userrole === "admin") {
+              document.getElementById("allDataLink").style.display = "";
+            }
             let userName = document.getElementById("userName");
             userName.innerHTML = email;
             props.setStatus("User " + email + " successfully created");
+            setTimeout(() => props.setStatus(""), 3000);
+
             props.setShow(false);
           }
         } catch (err) {
-          props.setStatus(text);
+          props.setStatus("Error occurred");
           console.log("err:", err + "data: " + text);
         }
       });

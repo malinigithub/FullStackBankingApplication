@@ -73,12 +73,12 @@ app.get("/account/create/:name/:email/:password", function (req, res) {
         .then((user) => {
           //console.log(user);
           const accessToken = jwt.sign(
-            { useremail: req.params.email, role: user.role },
+            { useremail: req.params.email, role: user.userrole },
             accessTokenSecret,
             { expiresIn: "20m" }
           );
           const refreshToken = jwt.sign(
-            { useremail: req.params.email, role: user.role },
+            { useremail: req.params.email, role: user.userrole },
             refreshTokenSecret
           );
           refreshTokens.push(refreshToken);
@@ -115,12 +115,12 @@ app.get("/account/login/:email/:password", function (req, res) {
     if (user.length > 0) {
       if (user[0].password === req.params.password) {
         const accessToken = jwt.sign(
-          { useremail: req.params.email, role: user.role },
+          { useremail: req.params.email, role: user[0].userrole },
           accessTokenSecret,
           { expiresIn: "20m" }
         );
         const refreshToken = jwt.sign(
-          { useremail: req.params.email, role: user.role },
+          { useremail: req.params.email, role: user[0].userrole },
           refreshTokenSecret
         );
 
@@ -158,7 +158,7 @@ app.get("/account/googlelogin/:email/:name", function (req, res) {
         const accessToken = jwt.sign(
           {
             useremail: req.params.email,
-            role: user.role,
+            role: foundUser.userrole,
           },
           accessTokenSecret,
           { expiresIn: "20m" }
@@ -166,7 +166,7 @@ app.get("/account/googlelogin/:email/:name", function (req, res) {
         const refreshToken = jwt.sign(
           {
             useremail: req.params.email,
-            role: user.role,
+            role: foundUser.userrole,
           },
           refreshTokenSecret
         );
@@ -195,7 +195,7 @@ app.get("/account/googlelogin/:email/:name", function (req, res) {
             const accessToken = jwt.sign(
               {
                 useremail: req.params.email,
-                role: user.role,
+                role: foundUser.userrole,
               },
               accessTokenSecret,
               { expiresIn: "20m" }
@@ -203,7 +203,7 @@ app.get("/account/googlelogin/:email/:name", function (req, res) {
             const refreshToken = jwt.sign(
               {
                 useremail: req.params.email,
-                role: user.role,
+                role: foundUser.userrole,
               },
               refreshTokenSecret
             );
@@ -273,10 +273,16 @@ app.get(
 
 // all accounts
 app.get("/account/all", authenticateJWT, function (req, res) {
-  dal.all().then((docs) => {
-    //console.log(docs);
-    res.send(docs);
-  });
+  const { useremail, role } = req.user;
+
+  if (role === "admin") {
+    dal.all().then((docs) => {
+      //console.log(docs);
+      res.send(docs);
+    });
+  } else {
+    res.sendStatus(403);
+  }
 });
 
 var port = process.env.PORT || 4000;

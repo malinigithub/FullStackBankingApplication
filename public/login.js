@@ -42,7 +42,14 @@ function LoginMsg(props) {
     Cookies.remove("bearerToken");
     Cookies.remove("gToken");
     auth.signOut();
-    //Logout();
+    userName.innerHTML = "";
+    document.getElementById("createAccountLink").style.display = "";
+    document.getElementById("loginLink").style.display = "";
+    document.getElementById("logoutLink").style.display = "none";
+    document.getElementById("allDataLink").style.display = "none";
+
+    props.userCtx.currentUser = [, , ,];
+    //console.log("reauth logout: ", props.userCtx.currentUser);
   }
   return (
     <>
@@ -83,12 +90,15 @@ function LoginForm(props) {
           document.getElementById("logoutLink").style.display = "";
 
           props.userCtx.currentUser = jsonvalue.user[0];
+          if (props.userCtx.currentUser.userrole === "admin") {
+            document.getElementById("allDataLink").style.display = "";
+          }
           let userName = document.getElementById("userName");
           userName.innerHTML = email;
           props.setStatus("");
           props.setShow(false);
         } catch (err) {
-          props.setStatus(text);
+          props.setStatus("Error occurred");
           console.log("err:", err + "data: " + text);
         }
       });
@@ -135,13 +145,15 @@ function LoginForm(props) {
 
               //userContext = jsonvalue.foundUser;
               props.userCtx.currentUser = jsonvalue.foundUser;
-
+              if (props.userCtx.currentUser.userrole === "admin") {
+                document.getElementById("allDataLink").style.display = "";
+              }
               let userName = document.getElementById("userName");
               userName.innerHTML = googleemail;
               props.setStatus("");
               props.setShow(false);
             } catch (err) {
-              props.setStatus(text);
+              props.setStatus("Error occurred");
               console.log("err:", err + "data: " + text);
             }
           });
@@ -157,6 +169,7 @@ function LoginForm(props) {
         //const email = error.customData.email;
         //The AuthCredential type that was used.
         // const credential =firebase.auth.GoogleAuthProvider.credentialFromError(error);
+        props.setStatus("Error occurred");
 
         console.log(error, errorCode, errorMessage, email);
       });
