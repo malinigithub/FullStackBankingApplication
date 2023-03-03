@@ -11,6 +11,8 @@ function Logout() {
     document.getElementById("logoutLink").style.display = "none";
     userCtx.currentUser = [, , ,];
     Cookies.remove("bearerToken");
+    Cookies.remove("gToken");
+
     message = "Signed Out Successfully";
     //console.log("logout auth ", firebase.auth());
 

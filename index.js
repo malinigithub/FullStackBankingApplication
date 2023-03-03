@@ -9,6 +9,8 @@ const jwt = require("jsonwebtoken");
 
 const dotenv = require("dotenv");
 dotenv.config();
+let cookieParser = require("cookie-parser");
+
 const accessTokenSecret = process.env.ACCESSTOKENSECRET;
 const refreshTokenSecret = process.env.REFRESHTOKENSECRET;
 const refreshTokens = [];
@@ -17,7 +19,7 @@ const app = express();
 // used to serve static files from public directory
 app.use(express.static("public"));
 app.use(cors());
-
+app.use(cookieParser());
 app.use(bodyParser.json());
 
 const authenticateJWT = (req, res, next) => {
@@ -69,7 +71,7 @@ app.get("/account/create/:name/:email/:password", function (req, res) {
           req.params.password
         )
         .then((user) => {
-          console.log(user);
+          //console.log(user);
           const accessToken = jwt.sign(
             { useremail: req.params.email, role: user.role },
             accessTokenSecret,
@@ -141,84 +143,90 @@ app.get("/account/login/:email/:password", function (req, res) {
 //google login flow:
 app.get("/account/googlelogin/:email/:name", function (req, res) {
   //console.log("googleLogin in index.js");
-  dal.find(req.params.email, "external").then((user) => {
-    let foundUser;
+  //console.log("Cookies: ", req.cookies.gToken);
+  token = req.cookies.gToken;
+  if (!token) {
+    res.sendStatus(403);
+  } else {
+    dal.find(req.params.email, "external").then((user) => {
+      let foundUser;
 
-    // if user exists, check password
-    if (user.length > 0) {
-      //console.log("user found? :", user[0].email);
-      foundUser = user[0];
-      const accessToken = jwt.sign(
-        {
-          useremail: req.params.email,
-          role: user.role,
-        },
-        accessTokenSecret,
-        { expiresIn: "20m" }
-      );
-      const refreshToken = jwt.sign(
-        {
-          useremail: req.params.email,
-          role: user.role,
-        },
-        refreshTokenSecret
-      );
+      // if user exists, check password
+      if (user.length > 0) {
+        //console.log("user found? :", user[0].email);
+        foundUser = user[0];
+        const accessToken = jwt.sign(
+          {
+            useremail: req.params.email,
+            role: user.role,
+          },
+          accessTokenSecret,
+          { expiresIn: "20m" }
+        );
+        const refreshToken = jwt.sign(
+          {
+            useremail: req.params.email,
+            role: user.role,
+          },
+          refreshTokenSecret
+        );
 
-      refreshTokens.push(refreshToken);
+        refreshTokens.push(refreshToken);
 
-      res.json({
-        accessToken,
-        refreshToken,
-        foundUser,
-      });
-      // res.send(user);
-    } else {
-      console.log("Login: user not found, creating user ");
-      dal
-        .createExternalAccount(
-          "external",
-          req.params.email,
-          "member",
-          req.params.name
-        )
-        .then((user) => {
-          console.log(user);
-          foundUser = user;
-
-          const accessToken = jwt.sign(
-            {
-              useremail: req.params.email,
-              role: user.role,
-            },
-            accessTokenSecret,
-            { expiresIn: "20m" }
-          );
-          const refreshToken = jwt.sign(
-            {
-              useremail: req.params.email,
-              role: user.role,
-            },
-            refreshTokenSecret
-          );
-
-          refreshTokens.push(refreshToken);
-
-          res.json({
-            accessToken,
-            refreshToken,
-            foundUser,
-          });
-          // res.send(user);
+        res.json({
+          accessToken,
+          refreshToken,
+          foundUser,
         });
-    }
-  });
+        // res.send(user);
+      } else {
+        console.log("Login: user not found, creating user ");
+        dal
+          .createExternalAccount(
+            "external",
+            req.params.email,
+            "member",
+            req.params.name
+          )
+          .then((user) => {
+            //console.log(user);
+            foundUser = user;
+
+            const accessToken = jwt.sign(
+              {
+                useremail: req.params.email,
+                role: user.role,
+              },
+              accessTokenSecret,
+              { expiresIn: "20m" }
+            );
+            const refreshToken = jwt.sign(
+              {
+                useremail: req.params.email,
+                role: user.role,
+              },
+              refreshTokenSecret
+            );
+
+            refreshTokens.push(refreshToken);
+
+            res.json({
+              accessToken,
+              refreshToken,
+              foundUser,
+            });
+            // res.send(user);
+          });
+      }
+    });
+  }
 });
 // find user account
 app.get("/account/find/:email", authenticateJWT, function (req, res) {
   const { useremail, role } = req.user;
   if (useremail === req.params.email) {
     dal.find(req.params.email, "pwd").then((user) => {
-      console.log(user);
+      //console.log(user);
       res.send(user);
     });
   } else {
@@ -232,7 +240,7 @@ app.get("/account/findOne/:email", authenticateJWT, function (req, res) {
 
   if (useremail === req.params.email) {
     dal.findOne(req.params.email, "pwd").then((user) => {
-      console.log(user);
+      //console.log(user);
       res.send(user);
     });
   } else {
@@ -254,7 +262,7 @@ app.get(
       dal
         .update(req.params.authType, req.params.email, amount)
         .then((response) => {
-          console.log(response);
+          //console.log(response);
           res.send(response);
         });
     } else {
@@ -266,7 +274,7 @@ app.get(
 // all accounts
 app.get("/account/all", authenticateJWT, function (req, res) {
   dal.all().then((docs) => {
-    console.log(docs);
+    //console.log(docs);
     res.send(docs);
   });
 });

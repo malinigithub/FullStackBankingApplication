@@ -40,7 +40,7 @@ function LoginMsg(props) {
   function authenticateAgain() {
     props.setShow(true);
     Cookies.remove("bearerToken");
-
+    Cookies.remove("gToken");
     auth.signOut();
     //Logout();
   }
@@ -108,6 +108,8 @@ function LoginForm(props) {
 
         const credential = result.credential;
         const token = credential.accesstoken;
+        Cookies.set("gToken", result.credential.accessToken);
+
         // The signed-in user info
         const user = result.user;
         googleemail = user.email;
