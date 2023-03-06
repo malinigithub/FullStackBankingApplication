@@ -112,7 +112,12 @@ app.get("/account/create/:name/:email", function (req, res) {
         // else create user
 
         dal
-          .create("pwd", req.params.email, "member", req.params.name)
+          .createExternalAccount(
+            "pwd",
+            req.params.email,
+            "member",
+            req.params.name
+          )
           .then((user) => {
             //console.log(user);
             const accessToken = jwt.sign(

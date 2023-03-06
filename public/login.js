@@ -111,11 +111,18 @@ function LoginForm(props) {
         var errorMessage = error.message;
         //let statusText;
         // ..
-        console.log("firebase user error", error);
-        props.setStatus("Error: " + errorMessage);
-        alert(errorMessage);
-        setTimeout(() => props.setStatus(""), 3000);
-        return false;
+        if (errorCode === "auth/user-not-found") {
+          console.log("firebase user error", error);
+          props.setStatus("Error: user not found");
+          alert("Error: user not found");
+          setTimeout(() => props.setStatus(""), 3000);
+        } else {
+          console.log("firebase user error else", error);
+          props.setStatus("Error: " + errorMessage);
+          alert(errorMessage);
+          setTimeout(() => props.setStatus(""), 3000);
+          return false;
+        }
       });
   }
   function googleLoginHandle() {

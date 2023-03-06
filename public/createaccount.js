@@ -80,7 +80,7 @@ function CreateForm(props) {
       setTimeout(() => props.setStatus(""), 3000);
       return false;
     }
-    console.log(name, email);
+    //console.log(name, email);
     firebase
       .auth()
       .createUserWithEmailAndPassword(email, password)
