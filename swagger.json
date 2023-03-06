@@ -9,7 +9,7 @@
       "url": "https://opensource.org/licenses/MIT"
     }
   },
-  "host": "localhost:3000",
+  "host": "fullstackbankingapplication.herokuapp.com",
   "basePath": "/",
   "tags": [
     {
@@ -17,13 +17,332 @@
       "description": "APIs for users in the system"
     }
   ],
-  "schemes": ["http"],
+  "components": {
+    "securitySchemes": {
+      "cookie": {
+        "type": "apiKey",
+        "in": "Header",
+        "name": "Cookie"
+      },
+      "Authorization": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  },
+  "security": [
+    {
+      "Cookie": []
+    },
+    {
+      "Authorization": []
+    }
+  ],
+  "schemes": ["https"],
   "consumes": ["application/json"],
   "produces": ["application/json"],
   "paths": {
+    "/account/login/{email}": {
+      "parameters": [
+        {
+          "name": "email",
+          "in": "path",
+          "required": true,
+          "description": "email ID of the user account",
+          "type": "string"
+        },
+        {
+          "name": "Cookie",
+          "in": "header",
+          "required": true,
+          "description": "User uid from the firebase auth provider, Enter: gToken= followed by uid, e.g. gToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9",
+          "type": "string"
+        }
+      ],
+
+      "get": {
+        "tags": ["Login"],
+
+        "summary": "Login in the user",
+        "produces": ["application/json"],
+        "security": [
+          {
+            "Cookie": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "accessToken": "string",
+              "refreshToken": "string",
+              "$ref": "#/definitions/Users"
+            }
+          },
+          "403": {
+            "description": "Forbidden, invalid gToken, NOTE: cookie seems to fail in Swagger, if that happens, copy the curl command and try in terminal to get access token for other requests.",
+            "schema": {
+              "accessToken": "string",
+              "refreshToken": "string",
+              "$ref": "#/definitions/Users"
+            }
+          }
+        }
+      }
+    },
+    "/account/create/{name}/{email}": {
+      "parameters": [
+        {
+          "name": "name",
+          "in": "path",
+          "required": true,
+          "description": "name of the user account",
+          "type": "string"
+        },
+        {
+          "name": "email",
+          "in": "path",
+          "required": true,
+          "description": "email ID of the user account",
+          "type": "string"
+        },
+
+        {
+          "name": "Cookie",
+          "in": "header",
+          "required": true,
+          "description": "User uid from the firebase auth provider, Enter: gToken= followed by uid, e.g. gToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9",
+          "type": "string"
+        }
+      ],
+
+      "get": {
+        "tags": ["Create"],
+
+        "summary": "create a new user",
+        "produces": ["application/json"],
+        "security": [
+          {
+            "Cookie": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "accessToken": "string",
+              "refreshToken": "string",
+              "$ref": "#/definitions/Users"
+            }
+          },
+          "403": {
+            "description": "Forbidden, invalid gToken, NOTE: cookie seems to fail in Swagger, if that happens, copy the curl command and try in terminal to get access token for other requests.",
+            "schema": {
+              "accessToken": "string",
+              "refreshToken": "string",
+              "$ref": "#/definitions/Users"
+            }
+          }
+        }
+      }
+    },
+    "/account/googlelogin/{email}/{name}": {
+      "parameters": [
+        {
+          "name": "email",
+          "in": "path",
+          "required": true,
+          "description": "email ID of the user account",
+          "type": "string"
+        },
+        {
+          "name": "name",
+          "in": "path",
+          "required": true,
+          "description": "name of the user account",
+          "type": "string"
+        },
+        {
+          "name": "Cookie",
+          "in": "header",
+          "required": true,
+          "description": "google token from the google auth provider, Note: only developers can use this. Enter: gToken= followed by uid, e.g. gToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9",
+          "type": "string"
+        }
+      ],
+
+      "get": {
+        "tags": ["googleAuthLogin"],
+        "summary": "Google Auth Login Flow: Note: it is not possible to test create account flow through API for google auth provider flow, since create account requires account creation in both firebase and in application. This API only exposes the application part and not the google auth provider flow",
+        "produces": ["application/json"],
+        "security": [
+          {
+            "Cookie": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "accessToken": "string",
+              "refreshToken": "string",
+              "$ref": "#/definitions/Users"
+            }
+          },
+          "403": {
+            "description": "Forbidden, invalid gToken, NOTE: cookie seems to fail in Swagger, if that happens, copy the curl command and try in terminal to get access token for other requests.",
+            "schema": {
+              "accessToken": "string",
+              "refreshToken": "string",
+              "$ref": "#/definitions/Users"
+            }
+          }
+        }
+      }
+    },
+    "/account/find/{email}": {
+      "parameters": [
+        {
+          "name": "email",
+          "in": "path",
+          "required": true,
+          "description": "email ID of the user account",
+          "type": "string"
+        },
+        {
+          "name": "Authorization",
+          "in": "header",
+          "required": true,
+          "description": "Access token: Enter: Bearer followed by access token, e.g. Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9",
+          "type": "string"
+        }
+      ],
+
+      "get": {
+        "tags": ["FindUser"],
+
+        "summary": "Get information of specific user",
+        "produces": ["application/json"],
+        "security": [
+          {
+            "Authorization": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "accessToken": "string",
+              "refreshToken": "string",
+              "$ref": "#/definitions/Users"
+            }
+          },
+          "403": {
+            "description": "Forbidden, invalid gToken",
+            "schema": {
+              "accessToken": "string",
+              "refreshToken": "string",
+              "$ref": "#/definitions/Users"
+            }
+          },
+          "401": {
+            "description": "Invalid Bearer Token",
+            "schema": {
+              "accessToken": "string",
+              "refreshToken": "string",
+              "$ref": "#/definitions/Users"
+            }
+          }
+        }
+      }
+    },
+    "/account/update/{authType}/{email}/{amount}": {
+      "parameters": [
+        {
+          "name": "authType",
+          "in": "path",
+          "required": true,
+          "description": "Password auth (pwd) or google auth provider (external)",
+          "type": "string"
+        },
+        {
+          "name": "email",
+          "in": "path",
+          "required": true,
+          "description": "email ID of the user account",
+          "type": "string"
+        },
+        {
+          "name": "amount",
+          "in": "path",
+          "required": true,
+          "description": "amount to be deposited (+ve) or withdrawan(-ve)",
+          "type": "number"
+        },
+        {
+          "name": "Authorization",
+          "in": "header",
+          "required": true,
+          "description": "Access token: Enter: Bearer followed by access token, e.g. Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9",
+          "type": "string"
+        }
+      ],
+
+      "get": {
+        "tags": ["UpdateAmount"],
+        "summary": "Deposit or withdraw - update amount",
+        "produces": ["application/json"],
+        "security": [
+          {
+            "Authorization": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "accessToken": "string",
+              "refreshToken": "string",
+              "$ref": "#/definitions/Users"
+            }
+          },
+          "403": {
+            "description": "Forbidden, invalid gToken",
+            "schema": {
+              "accessToken": "string",
+              "refreshToken": "string",
+              "$ref": "#/definitions/Users"
+            }
+          },
+          "401": {
+            "description": "Invalid Bearer Token",
+            "schema": {
+              "accessToken": "string",
+              "refreshToken": "string",
+              "$ref": "#/definitions/Users"
+            }
+          }
+        }
+      }
+    },
     "/account/all": {
       "get": {
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "description": "Access token: Enter: Bearer followed by access token, e.g. Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9",
+            "type": "string"
+          }
+        ],
         "tags": ["AllAccounts"],
+        "security": [
+          {
+            "Authorization": []
+          }
+        ],
         "summary": "Get all user accounts in the system",
         "responses": {
           "200": {
@@ -31,6 +350,22 @@
             "schema": {
               "$ref": "#/definitions/Users"
             }
+          }
+        },
+        "401": {
+          "description": "Invalid Bearer Token",
+          "schema": {
+            "accessToken": "string",
+            "refreshToken": "string",
+            "$ref": "#/definitions/Users"
+          }
+        },
+        "403": {
+          "description": "Forbidden, invalid gToken",
+          "schema": {
+            "accessToken": "string",
+            "refreshToken": "string",
+            "$ref": "#/definitions/Users"
           }
         }
       }
@@ -40,18 +375,21 @@
     "Users": {
       "required": ["email"],
       "properties": {
+        "authType": {
+          "type": "string"
+        },
         "email": {
-          "type": "integer",
+          "type": "string",
           "uniqueItems": true
+        },
+        "userrole": {
+          "type": "string"
         },
         "name": {
           "type": "string"
         },
-        "password": {
-          "type": "password"
-        },
         "balance": {
-          "type": "float"
+          "type": "number"
         }
       }
     }

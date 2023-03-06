@@ -140,10 +140,13 @@ function LoginForm(props) {
 
         const credential = result.credential;
         const token = credential.accesstoken;
+
         Cookies.set("gToken", result.credential.accessToken);
 
         // The signed-in user info
         const user = result.user;
+        //console.log("user.uid for google login", user.uid);
+
         googleemail = user.email;
         googleDisplayName = user.displayName;
 
