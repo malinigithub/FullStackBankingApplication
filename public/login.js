@@ -1,3 +1,14 @@
+const firebaseConfig = {
+  apiKey: "AIzaSyCQ_K1_nHf87Ba-J3vNn5nTwO88SUbjL88",
+  authDomain: "bankingappauth-edba5.firebaseapp.com",
+  projectId: "bankingappauth-edba5",
+  storageBucket: "bankingappauth-edba5.appspot.com",
+  messagingSenderId: "610924863185",
+  appId: "1:610924863185:web:1bdc7483b1a7f2cfc16ff0",
+};
+const app = firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+
 function Login() {
   const [show, setShow] = React.useState(true);
   const [status, setStatus] = React.useState("");
@@ -24,15 +35,29 @@ function Login() {
 }
 
 function LoginMsg(props) {
-  console.log("currentUser: ", props.userCtx.currentUser);
+  //console.log("currentUser: ", globalUserCtx.currentUser);
 
+  function authenticateAgain() {
+    props.setShow(true);
+    Cookies.remove("bearerToken");
+    Cookies.remove("gToken");
+    auth.signOut();
+    userName.innerHTML = "";
+    document.getElementById("createAccountLink").style.display = "";
+    document.getElementById("loginLink").style.display = "";
+    document.getElementById("logoutLink").style.display = "none";
+    document.getElementById("allDataLink").style.display = "none";
+
+    props.userCtx.currentUser = [, , ,];
+    //console.log("reauth logout: ", props.userCtx.currentUser);
+  }
   return (
     <>
       <h5>Success</h5>
       <button
         type="submit"
         className="btn btn-light"
-        onClick={() => props.setShow(true)}
+        onClick={authenticateAgain}
       >
         Authenticate again
       </button>
@@ -55,25 +80,113 @@ function LoginForm(props) {
       .then((response) => response.text())
       .then((text) => {
         try {
-          const data = JSON.parse(text);
-          let userName = document.getElementById("userName");
-          userName.innerHTML = email;
-          //document.getElementById("logoutLink").classList.remove("disabled");
+          //console.log("text", text);
+          let jsonvalue = JSON.parse(text);
+
+          Cookies.set("bearerToken", jsonvalue.accessToken);
+
           document.getElementById("createAccountLink").style.display = "none";
           document.getElementById("loginLink").style.display = "none";
           document.getElementById("logoutLink").style.display = "";
 
-          props.userCtx.currentUser = data;
+          props.userCtx.currentUser = jsonvalue.user[0];
+          if (props.userCtx.currentUser.userrole === "admin") {
+            document.getElementById("allDataLink").style.display = "";
+          }
+          let userName = document.getElementById("userName");
+          userName.innerHTML = email;
           props.setStatus("");
           props.setShow(false);
-          console.log("JSON:", data);
-          console.log("currentUser: ", props.userCtx.currentUser);
         } catch (err) {
-          props.setStatus(text);
+          props.setStatus("Error occurred");
           console.log("err:", err + "data: " + text);
         }
       });
   }
+  function googleLoginHandle() {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    //    console.log("google sign in clicked");
+    let googleemail;
+    let googleDisplayName;
+
+    firebase
+      .auth()
+      .signInWithPopup(provider)
+      .then((result) => {
+        //this gives you a google Access Token. You can use it to access the Google API
+        //console.log("google sign in clicked2");
+
+        const credential = result.credential;
+        const token = credential.accesstoken;
+        Cookies.set("gToken", result.credential.accessToken);
+
+        // The signed-in user info
+        const user = result.user;
+        googleemail = user.email;
+        googleDisplayName = user.displayName;
+
+        //setEmail(googlemail);
+        //console.log("user after google login: set emai:  ", email);
+        fetch(`/account/googlelogin/${googleemail}/${googleDisplayName}`)
+          .then((response) => response.text())
+          .then((text) => {
+            try {
+              //console.log("fetch googlelogin in signup call");
+
+              let jsonvalue = JSON.parse(text);
+
+              Cookies.set("bearerToken", jsonvalue.accessToken);
+
+              document.getElementById("createAccountLink").style.display =
+                "none";
+              document.getElementById("loginLink").style.display = "none";
+              document.getElementById("logoutLink").style.display = "";
+              // console.log("before setting globalUserCtx");
+
+              //userContext = jsonvalue.foundUser;
+              props.userCtx.currentUser = jsonvalue.foundUser;
+              if (props.userCtx.currentUser.userrole === "admin") {
+                document.getElementById("allDataLink").style.display = "";
+              }
+              let userName = document.getElementById("userName");
+              userName.innerHTML = googleemail;
+              props.setStatus("");
+              props.setShow(false);
+            } catch (err) {
+              props.setStatus("Error occurred");
+              console.log("err:", err + "data: " + text);
+            }
+          });
+      })
+      .catch((error) => {
+        //Handle Errors here
+        //console.log("google sign in clicked== ERROR flow");
+
+        const errorCode = error.code;
+        const errorMessage = error.messagingSenderId;
+
+        //The email of the user's account used
+        //const email = error.customData.email;
+        //The AuthCredential type that was used.
+        // const credential =firebase.auth.GoogleAuthProvider.credentialFromError(error);
+        props.setStatus("Error occurred");
+
+        console.log(error, errorCode, errorMessage, email);
+      });
+    // console.log("end of googlelogin  function", props.userCtx.currentUser);
+  }
+  /*   auth.onAuthStateChanged((firebaseUser) => {
+    if (firebaseUser) {
+      console.log(
+        `You are logged in using the following email: ${firebaseUser.email}`
+      );
+
+      props.setStatus("");
+      props.setShow(false);
+    } else {
+      console.log("User is not logged in");
+    }
+  }); */
 
   return (
     <>
@@ -99,6 +212,14 @@ function LoginForm(props) {
       <br />
       <button type="submit" className="btn btn-light" onClick={handle}>
         Login
+      </button>{" "}
+      &nbsp;
+      <button
+        id="googlelogin"
+        className="btn btn-light"
+        onClick={googleLoginHandle}
+      >
+        Google Login
       </button>
     </>
   );

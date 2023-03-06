@@ -1,3 +1,4 @@
+//const mongoose = require("mongoose");
 const MongoClient = require("mongodb").MongoClient;
 const dotenv = require("dotenv");
 dotenv.config();
@@ -13,10 +14,20 @@ MongoClient.connect(url, { useUnifiedTopology: true }, function (err, client) {
 });
 
 // create user account
-function create(name, email, password) {
+function create(authType, email, userrole, name, password) {
   return new Promise((resolve, reject) => {
     const collection = db.collection("users");
-    const doc = { name, email, password, balance: 0 };
+    const doc = { authType, email, userrole, name, password, balance: 0 };
+    collection.insertOne(doc, { w: 1 }, function (err, result) {
+      err ? reject(err) : resolve(doc);
+    });
+  });
+}
+// create user account
+function createExternalAccount(authType, email, userrole, name) {
+  return new Promise((resolve, reject) => {
+    const collection = db.collection("users");
+    const doc = { authType, email, userrole, name, balance: 0 };
     collection.insertOne(doc, { w: 1 }, function (err, result) {
       err ? reject(err) : resolve(doc);
     });
@@ -29,6 +40,16 @@ function find(email) {
     const customers = db
       .collection("users")
       .find({ email: email })
+      .toArray(function (err, docs) {
+        err ? reject(err) : resolve(docs);
+      });
+  });
+}
+function find(email, authType) {
+  return new Promise((resolve, reject) => {
+    const customers = db
+      .collection("users")
+      .find({ email: email, authType: authType })
       .toArray(function (err, docs) {
         err ? reject(err) : resolve(docs);
       });
@@ -47,12 +68,12 @@ function findOne(email) {
 }
 
 // update - deposit/withdraw amount
-function update(email, amount) {
+function update(authType, email, amount) {
   return new Promise((resolve, reject) => {
     const customers = db
       .collection("users")
       .findOneAndUpdate(
-        { email: email },
+        { authType: authType, email: email },
         { $inc: { balance: amount } },
         { returnOriginal: false },
         function (err, documents) {
@@ -74,4 +95,4 @@ function all() {
   });
 }
 
-module.exports = { create, findOne, find, update, all };
+module.exports = { create, createExternalAccount, findOne, find, update, all };

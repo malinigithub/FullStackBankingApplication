@@ -9,7 +9,7 @@ function Withdraw() {
       header="Withdraw"
       status={status}
       body={
-        userCtx.currentUser.name ? (
+        userCtx.currentUser.email ? (
           show ? (
             <WithdrawForm
               setShow={setShow}
@@ -67,6 +67,16 @@ function WithdrawForm(props) {
   //const [email, setEmail] = React.useState("");
   const [amount, setAmount] = React.useState("");
   let email = props.userCtx.currentUser.email;
+  let authType = props.userCtx.currentUser.authType;
+
+  let bearerToken = Cookies.get("bearerToken");
+  let token = "Bearer " + bearerToken;
+
+  const options = {
+    headers: {
+      Authorization: token,
+    },
+  };
   let balanceAmount = props.userCtx.currentUser.balance;
   function handle() {
     if (amount <= 0) {
@@ -77,17 +87,17 @@ function WithdrawForm(props) {
       alert("Enter amount less than current balance");
       return false;
     }
-    fetch(`/account/update/${email}/-${amount}`)
+    fetch(`/account/update/${authType}/${email}/-${amount}`, options)
       .then((response) => response.text())
       .then((text) => {
         try {
           const data = JSON.parse(text);
           props.userCtx.currentUser.balance = data.value.balance;
-          props.setStatus(JSON.stringify(data.value));
+          props.setStatus("Withdrawal Completed");
           props.setShow(false);
-          console.log("JSON:", data);
+          //console.log("JSON:", data);
         } catch (err) {
-          props.setStatus("Deposit failed");
+          props.setStatus("Withdrawal failed");
           console.log("err:", text);
         }
       });

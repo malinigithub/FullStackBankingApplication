@@ -1,6 +1,9 @@
+//let userContext = React.useContext(UserContext);
+
 function Deposit() {
   const [show, setShow] = React.useState(true);
   const [status, setStatus] = React.useState("");
+  //console.log("globalUserCtx inside deposit:", userContext);
   let userCtx = React.useContext(UserContext);
 
   return (
@@ -9,7 +12,7 @@ function Deposit() {
       header="Deposit"
       status={status}
       body={
-        userCtx.currentUser.name ? (
+        userCtx.currentUser.email ? (
           show ? (
             <DepositForm
               setShow={setShow}
@@ -68,7 +71,15 @@ function DepositForm(props) {
   //const [email, setEmail] = React.useState("");
   const [amount, setAmount] = React.useState("");
   let email = props.userCtx.currentUser.email;
+  let authType = props.userCtx.currentUser.authType;
+  let bearerToken = Cookies.get("bearerToken");
+  let token = "Bearer " + bearerToken;
 
+  const options = {
+    headers: {
+      Authorization: token,
+    },
+  };
   function handle() {
     if (amount <= 0 || amount > 15000) {
       alert("Enter an amount between 0 and 15000");
@@ -76,15 +87,15 @@ function DepositForm(props) {
 
       return false;
     }
-    fetch(`/account/update/${email}/${amount}`)
+    fetch(`/account/update/${authType}/${email}/${amount}`, options)
       .then((response) => response.text())
       .then((text) => {
         try {
           const data = JSON.parse(text);
           props.userCtx.currentUser.balance = data.value.balance;
-          props.setStatus(JSON.stringify(data.value));
+          props.setStatus("Deposit Completed");
           props.setShow(false);
-          console.log("JSON:", data);
+          //console.log("JSON:", data);
         } catch (err) {
           props.setStatus("Deposit failed");
           console.log("err:", text);
