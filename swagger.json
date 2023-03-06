@@ -81,7 +81,7 @@
             }
           },
           "403": {
-            "description": "Forbidden, invalid gToken",
+            "description": "Forbidden, invalid gToken, NOTE: cookie seems to fail in Swagger, if that happens, copy the curl command and try in terminal to get access token for other requests.",
             "schema": {
               "accessToken": "string",
               "refreshToken": "string",
@@ -137,7 +137,7 @@
             }
           },
           "403": {
-            "description": "Forbidden, invalid gToken",
+            "description": "Forbidden, invalid gToken, NOTE: cookie seems to fail in Swagger, if that happens, copy the curl command and try in terminal to get access token for other requests.",
             "schema": {
               "accessToken": "string",
               "refreshToken": "string",
@@ -167,7 +167,7 @@
           "name": "Cookie",
           "in": "header",
           "required": true,
-          "description": "User uid from the firebase auth provider, Enter: gToken= followed by uid, e.g. gToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9",
+          "description": "google token from the google auth provider, Note: only developers can use this. Enter: gToken= followed by uid, e.g. gToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9",
           "type": "string"
         }
       ],
@@ -192,7 +192,7 @@
             }
           },
           "403": {
-            "description": "Forbidden, invalid gToken",
+            "description": "Forbidden, invalid gToken, NOTE: cookie seems to fail in Swagger, if that happens, copy the curl command and try in terminal to get access token for other requests.",
             "schema": {
               "accessToken": "string",
               "refreshToken": "string",
