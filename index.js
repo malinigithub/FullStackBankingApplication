@@ -42,7 +42,7 @@ const authenticateJWT = (req, res, next) => {
 };
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-
+/*
 // create user account
 app.get("/account/create/:name/:email/:password", function (req, res) {
   // check if account exists
@@ -91,7 +91,7 @@ app.get("/account/create/:name/:email/:password", function (req, res) {
     }
   });
 });
-
+*/
 // create user account
 app.get("/account/create/:name/:email", function (req, res) {
   // check if account exists
@@ -156,7 +156,7 @@ app.get("/account/login/:email/:password", function (req, res) {
     }
   });
 });*/
-
+/*
 app.get("/account/login/:email/:password", function (req, res) {
   dal.find(req.params.email, "pwd").then((user) => {
     // if user exists, check password
@@ -187,7 +187,7 @@ app.get("/account/login/:email/:password", function (req, res) {
     }
   });
 });
-
+*/
 app.get("/account/login/:email", function (req, res) {
   token = req.cookies.gToken;
   if (!token) {
