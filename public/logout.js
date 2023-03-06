@@ -4,7 +4,7 @@ function Logout() {
   let message;
 
   if (userCtx.currentUser.email) {
-    console.log("logout");
+    //console.log("logout");
     let userName = document.getElementById("userName");
     userName.innerHTML = "";
     document.getElementById("createAccountLink").style.display = "";

@@ -81,39 +81,64 @@ function CreateForm(props) {
       return false;
     }
     console.log(name, email);
-    const url = `/account/create/${name}/${email}/${password}`;
-    fetch(url)
-      .then((response) => response.text())
-      .then((text) => {
-        try {
-          if (text === "User already exists") {
-            props.setStatus("Error: User " + email + " already exists");
-            alert("Error: User " + email + " already exists");
-            setTimeout(() => props.setStatus(""), 3000);
-            props.setShow(true);
-          } else {
-            let jsonvalue = JSON.parse(text);
-            Cookies.set("bearerToken", jsonvalue.accessToken);
+    firebase
+      .auth()
+      .createUserWithEmailAndPassword(email, password)
+      .then((userCredential) => {
+        // Signed in
+        var user = userCredential.user;
+        // ...
+        //console.log("firebase user created", user);
+        //console.log("firebase usercredential", userCredential);
+        //console.log("uid as gtoken? ", userCredential.user.uid);
 
-            document.getElementById("createAccountLink").style.display = "none";
-            document.getElementById("loginLink").style.display = "none";
-            document.getElementById("logoutLink").style.display = "";
+        Cookies.set("gToken", userCredential.user.uid);
+        const url = `/account/create/${name}/${email}`;
+        fetch(url)
+          .then((response) => response.text())
+          .then((text) => {
+            try {
+              if (text === "User already exists") {
+                props.setStatus("Error: User " + email + " already exists");
+                alert("Error: User " + email + " already exists");
+                setTimeout(() => props.setStatus(""), 3000);
+                props.setShow(true);
+              } else {
+                let jsonvalue = JSON.parse(text);
+                Cookies.set("bearerToken", jsonvalue.accessToken);
 
-            props.userCtx.currentUser = jsonvalue.user;
-            if (props.userCtx.currentUser.userrole === "admin") {
-              document.getElementById("allDataLink").style.display = "";
+                document.getElementById("createAccountLink").style.display =
+                  "none";
+                document.getElementById("loginLink").style.display = "none";
+                document.getElementById("logoutLink").style.display = "";
+
+                props.userCtx.currentUser = jsonvalue.user;
+                if (props.userCtx.currentUser.userrole === "admin") {
+                  document.getElementById("allDataLink").style.display = "";
+                }
+                let userName = document.getElementById("userName");
+                userName.innerHTML = email;
+                props.setStatus("User " + email + " successfully created");
+                setTimeout(() => props.setStatus(""), 3000);
+
+                props.setShow(false);
+              }
+            } catch (err) {
+              props.setStatus("Error occurred");
+              console.log("err:", err + "data: " + text);
             }
-            let userName = document.getElementById("userName");
-            userName.innerHTML = email;
-            props.setStatus("User " + email + " successfully created");
-            setTimeout(() => props.setStatus(""), 3000);
-
-            props.setShow(false);
-          }
-        } catch (err) {
-          props.setStatus("Error occurred");
-          console.log("err:", err + "data: " + text);
-        }
+          });
+      })
+      .catch((error) => {
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        //let statusText;
+        // ..
+        console.log("firebase user error", error);
+        props.setStatus("Error: " + errorMessage);
+        alert(errorMessage);
+        setTimeout(() => props.setStatus(""), 3000);
+        return false;
       });
   }
 

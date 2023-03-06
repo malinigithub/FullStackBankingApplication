@@ -1,14 +1,3 @@
-const firebaseConfig = {
-  apiKey: "AIzaSyCQ_K1_nHf87Ba-J3vNn5nTwO88SUbjL88",
-  authDomain: "bankingappauth-edba5.firebaseapp.com",
-  projectId: "bankingappauth-edba5",
-  storageBucket: "bankingappauth-edba5.appspot.com",
-  messagingSenderId: "610924863185",
-  appId: "1:610924863185:web:1bdc7483b1a7f2cfc16ff0",
-};
-const app = firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
-
 function Login() {
   const [show, setShow] = React.useState(true);
   const [status, setStatus] = React.useState("");
@@ -76,31 +65,57 @@ function LoginForm(props) {
       setTimeout(() => props.setStatus(""), 3000);
       return false;
     }
-    fetch(`/account/login/${email}/${password}`)
-      .then((response) => response.text())
-      .then((text) => {
-        try {
-          //console.log("text", text);
-          let jsonvalue = JSON.parse(text);
 
-          Cookies.set("bearerToken", jsonvalue.accessToken);
+    firebase
+      .auth()
+      .signInWithEmailAndPassword(email, password)
+      .then(function (userCredential) {
+        var user = userCredential.user;
+        // ...
+        //console.log("firebase user logged", user);
+        //console.log("firebase usercredential", userCredential);
+        //console.log("uid as gtoken? ", userCredential.user.uid);
 
-          document.getElementById("createAccountLink").style.display = "none";
-          document.getElementById("loginLink").style.display = "none";
-          document.getElementById("logoutLink").style.display = "";
+        Cookies.set("gToken", userCredential.user.uid);
 
-          props.userCtx.currentUser = jsonvalue.user[0];
-          if (props.userCtx.currentUser.userrole === "admin") {
-            document.getElementById("allDataLink").style.display = "";
-          }
-          let userName = document.getElementById("userName");
-          userName.innerHTML = email;
-          props.setStatus("");
-          props.setShow(false);
-        } catch (err) {
-          props.setStatus("Error occurred");
-          console.log("err:", err + "data: " + text);
-        }
+        fetch(`/account/login/${email}`)
+          .then((response) => response.text())
+          .then((text) => {
+            try {
+              //console.log("text", text);
+              let jsonvalue = JSON.parse(text);
+
+              Cookies.set("bearerToken", jsonvalue.accessToken);
+
+              document.getElementById("createAccountLink").style.display =
+                "none";
+              document.getElementById("loginLink").style.display = "none";
+              document.getElementById("logoutLink").style.display = "";
+
+              props.userCtx.currentUser = jsonvalue.user[0];
+              if (props.userCtx.currentUser.userrole === "admin") {
+                document.getElementById("allDataLink").style.display = "";
+              }
+              let userName = document.getElementById("userName");
+              userName.innerHTML = email;
+              props.setStatus("");
+              props.setShow(false);
+            } catch (err) {
+              props.setStatus("Error occurred");
+              console.log("err:", err + "data: " + text);
+            }
+          });
+      })
+      .catch(function (error) {
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        //let statusText;
+        // ..
+        console.log("firebase user error", error);
+        props.setStatus("Error: " + errorMessage);
+        alert(errorMessage);
+        setTimeout(() => props.setStatus(""), 3000);
+        return false;
       });
   }
   function googleLoginHandle() {
@@ -175,19 +190,19 @@ function LoginForm(props) {
       });
     // console.log("end of googlelogin  function", props.userCtx.currentUser);
   }
-  /*   auth.onAuthStateChanged((firebaseUser) => {
+  /* auth.onAuthStateChanged((firebaseUser) => {
     if (firebaseUser) {
       console.log(
         `You are logged in using the following email: ${firebaseUser.email}`
       );
 
       props.setStatus("");
-      props.setShow(false);
+      //props.setShow(false);
     } else {
       console.log("User is not logged in");
     }
-  }); */
-
+  });
+*/
   return (
     <>
       Email

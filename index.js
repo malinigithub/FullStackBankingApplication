@@ -92,6 +92,49 @@ app.get("/account/create/:name/:email/:password", function (req, res) {
   });
 });
 
+// create user account
+app.get("/account/create/:name/:email", function (req, res) {
+  // check if account exists
+  token = req.cookies.gToken;
+  if (!token) {
+    res.sendStatus(403);
+  } else {
+    if (!req.params.email.includes("@") || !req.params.email.includes(".")) {
+      res.send("Error: Enter valid email id");
+    }
+    dal.find(req.params.email, "pwd").then((users) => {
+      // if user exists, return error message
+      if (users.length > 0) {
+        console.log("User already exists");
+        //res.sendStatus(403);
+        res.send("User already exists");
+      } else {
+        // else create user
+
+        dal
+          .create("pwd", req.params.email, "member", req.params.name)
+          .then((user) => {
+            //console.log(user);
+            const accessToken = jwt.sign(
+              { useremail: req.params.email, role: user.userrole },
+              accessTokenSecret,
+              { expiresIn: "20m" }
+            );
+            const refreshToken = jwt.sign(
+              { useremail: req.params.email, role: user.userrole },
+              refreshTokenSecret
+            );
+            refreshTokens.push(refreshToken);
+            res.json({
+              accessToken,
+              refreshToken,
+              user,
+            });
+          });
+      }
+    });
+  }
+});
 // login user
 /*
 app.get("/account/login/:email/:password", function (req, res) {
@@ -138,6 +181,38 @@ app.get("/account/login/:email/:password", function (req, res) {
       res.send("Login failed: user not found");
     }
   });
+});
+
+app.get("/account/login/:email", function (req, res) {
+  token = req.cookies.gToken;
+  if (!token) {
+    res.sendStatus(403);
+  } else {
+    dal.find(req.params.email, "pwd").then((user) => {
+      // if user exists, check password
+      if (user.length > 0) {
+        const accessToken = jwt.sign(
+          { useremail: req.params.email, role: user[0].userrole },
+          accessTokenSecret,
+          { expiresIn: "20m" }
+        );
+        const refreshToken = jwt.sign(
+          { useremail: req.params.email, role: user[0].userrole },
+          refreshTokenSecret
+        );
+
+        refreshTokens.push(refreshToken);
+
+        res.json({
+          accessToken,
+          refreshToken,
+          user,
+        });
+      } else {
+        res.send("Login failed: user not found");
+      }
+    });
+  }
 });
 
 //google login flow:
