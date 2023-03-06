@@ -174,8 +174,7 @@
 
       "get": {
         "tags": ["googleAuthLogin"],
-
-        "summary": "Google Auth Login Flow",
+        "summary": "Google Auth Login Flow: Note: it is not possible to test create account flow through API for google auth provider flow, since create account requires account creation in both firebase and in application. This API only exposes the application part and not the google auth provider flow",
         "produces": ["application/json"],
         "security": [
           {
