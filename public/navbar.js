@@ -1,7 +1,6 @@
 function NavBar() {
   const userCtx = React.useContext(UserContext);
-  console.log(userCtx);
-  let disabled = true;
+  //console.log(userCtx);
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-light">
       <a
