@@ -10,7 +10,7 @@ function NavBar() {
         title="Home Page"
         href="#"
       >
-        Banking Application
+        Rad Bank
       </a>
       <button
         className="navbar-toggler"
