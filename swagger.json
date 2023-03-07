@@ -233,24 +233,18 @@
           "200": {
             "description": "OK",
             "schema": {
-              "accessToken": "string",
-              "refreshToken": "string",
               "$ref": "#/definitions/Users"
             }
           },
           "403": {
             "description": "Forbidden, invalid gToken",
             "schema": {
-              "accessToken": "string",
-              "refreshToken": "string",
               "$ref": "#/definitions/Users"
             }
           },
           "401": {
             "description": "Invalid Bearer Token",
             "schema": {
-              "accessToken": "string",
-              "refreshToken": "string",
               "$ref": "#/definitions/Users"
             }
           }
@@ -302,24 +296,81 @@
           "200": {
             "description": "OK",
             "schema": {
-              "accessToken": "string",
-              "refreshToken": "string",
               "$ref": "#/definitions/Users"
             }
           },
           "403": {
             "description": "Forbidden, invalid gToken",
             "schema": {
-              "accessToken": "string",
-              "refreshToken": "string",
               "$ref": "#/definitions/Users"
             }
           },
           "401": {
             "description": "Invalid Bearer Token",
             "schema": {
-              "accessToken": "string",
-              "refreshToken": "string",
+              "$ref": "#/definitions/Users"
+            }
+          }
+        }
+      }
+    },
+    "/account/updaterole/{authType}/{email}/{userrole}": {
+      "parameters": [
+        {
+          "name": "authType",
+          "in": "path",
+          "required": true,
+          "description": "Password auth (pwd) or google auth provider (external)",
+          "type": "string"
+        },
+        {
+          "name": "email",
+          "in": "path",
+          "required": true,
+          "description": "email ID of the user account",
+          "type": "string"
+        },
+        {
+          "name": "userrole",
+          "in": "path",
+          "required": true,
+          "description": "userrole: member or admin",
+          "type": "string"
+        },
+        {
+          "name": "Authorization",
+          "in": "header",
+          "required": true,
+          "description": "Access token: Enter: Bearer followed by access token, e.g. Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9",
+          "type": "string"
+        }
+      ],
+
+      "get": {
+        "tags": ["updaterole"],
+        "summary": "Update userrole as admin or member",
+        "produces": ["application/json"],
+        "security": [
+          {
+            "Authorization": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Users"
+            }
+          },
+          "403": {
+            "description": "Forbidden, invalid gToken",
+            "schema": {
+              "$ref": "#/definitions/Users"
+            }
+          },
+          "401": {
+            "description": "Invalid Bearer Token",
+            "schema": {
               "$ref": "#/definitions/Users"
             }
           }
