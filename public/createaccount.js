@@ -33,11 +33,7 @@ function CreateMsg(props) {
     Cookies.remove("bearerToken");
     Cookies.remove("gToken");
     auth.signOut();
-    userName.innerHTML = "";
-    document.getElementById("createAccountLink").style.display = "";
-    document.getElementById("loginLink").style.display = "";
-    document.getElementById("logoutLink").style.display = "none";
-    document.getElementById("allDataLink").style.display = "none";
+    uiUpdates("", false, "");
 
     props.userCtx.currentUser = [, , ,];
     //console.log("reauth logout: ", props.userCtx.currentUser);
@@ -107,17 +103,9 @@ function CreateForm(props) {
                 let jsonvalue = JSON.parse(text);
                 Cookies.set("bearerToken", jsonvalue.accessToken);
 
-                document.getElementById("createAccountLink").style.display =
-                  "none";
-                document.getElementById("loginLink").style.display = "none";
-                document.getElementById("logoutLink").style.display = "";
-
                 props.userCtx.currentUser = jsonvalue.user;
-                if (props.userCtx.currentUser.userrole === "admin") {
-                  document.getElementById("allDataLink").style.display = "";
-                }
-                let userName = document.getElementById("userName");
-                userName.innerHTML = email;
+
+                uiUpdates(props.userCtx.currentUser.userrole, true, email);
                 props.setStatus("User " + email + " successfully created");
                 setTimeout(() => props.setStatus(""), 3000);
 
