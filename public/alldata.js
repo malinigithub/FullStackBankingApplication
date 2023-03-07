@@ -1,28 +1,78 @@
 function AllData() {
   const [data, setData] = React.useState("");
+  const userCtx = React.useContext(UserContext);
+  const [status, setStatus] = React.useState("");
 
-  let bearerToken = Cookies.get("bearerToken");
-  let token = "Bearer " + bearerToken;
-
-  const options = {
-    headers: {
-      Authorization: token,
-    },
-  };
-  React.useEffect(() => {
+  function displayData() {
+    let bearerToken = Cookies.get("bearerToken");
+    let token = "Bearer " + bearerToken;
+    let userData;
+    const options = {
+      headers: {
+        Authorization: token,
+      },
+    };
     // fetch all accounts from API
+
     fetch("/account/all", options)
       .then((response) => response.json())
       .then((data) => {
-        console.log(data);
-        setData(JSON.stringify(data));
-      });
-  }, []);
+        userData = data.map((user) => {
+          console.log("user data fetch: ", user.email);
+          return (
+            <>
+              <tr>
+                <td>{user.authType}</td>
+                <td>{user.userrole}</td>
+                <td>{user.email}</td>
+              </tr>
+            </>
+          );
+        });
+        console.log("map function userData: ", userData);
 
+        setData(userData);
+        //return userData;
+        //setStatus(userData);
+        //let allData = document.getElementById("allData");
+        //allData.innerHTML = userData;
+
+        //allData.innerHTML = JSON.stringify(userData);
+      });
+  }
   return (
     <>
-      <h5>All Data in Store:</h5>
-      {data}
+      {userCtx.currentUser.email ? (
+        <>
+          <button type="submit" className="btn btn-dark" onClick={displayData}>
+            View Data
+          </button>
+          <h5>All Data in Store:</h5>
+          <table>
+            <thead>
+              <tr>
+                <th>Auth Type</th>
+                <th>User Role</th>
+                <th>Email</th>
+              </tr>
+            </thead>
+            <tbody>{data || "click button to view data"}</tbody>
+          </table>
+        </>
+      ) : (
+        <b>
+          Please&nbsp;
+          <a
+            data-toggle="tool-tip"
+            data-placement="bottom"
+            title="Login"
+            href="#/login/"
+          >
+            Login&nbsp;
+          </a>{" "}
+          first to view members
+        </b>
+      )}
     </>
   );
 }

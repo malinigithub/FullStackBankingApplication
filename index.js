@@ -28,7 +28,6 @@ const authenticateJWT = (req, res, next) => {
   //console.log(`Body: ${JSON.stringify(req.body)}`);
   if (authHeader) {
     const token = authHeader.split(" ")[1];
-
     jwt.verify(token, accessTokenSecret, (err, user) => {
       if (err) {
         return res.sendStatus(403);
@@ -351,6 +350,25 @@ app.get(
   }
 );
 
+// update - deposit/withdraw amount
+app.get(
+  "/account/updaterole/:authType/:email/:userrole",
+  authenticateJWT,
+  function (req, res) {
+    const { useremail, role } = req.user;
+
+    if (role === "admin") {
+      dal
+        .updaterole(req.params.authType, req.params.email, req.params.userrole)
+        .then((response) => {
+          //console.log(response);
+          res.send(response);
+        });
+    } else {
+      res.sendStatus(403);
+    }
+  }
+);
 // all accounts
 app.get("/account/all", authenticateJWT, function (req, res) {
   const { useremail, role } = req.user;

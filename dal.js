@@ -82,6 +82,20 @@ function update(authType, email, amount) {
       );
   });
 }
+function updaterole(authType, email, role) {
+  return new Promise((resolve, reject) => {
+    const customers = db
+      .collection("users")
+      .findOneAndUpdate(
+        { authType: authType, email: email },
+        { $set: { userrole: role } },
+        { returnOriginal: false },
+        function (err, documents) {
+          err ? reject(err) : resolve(documents);
+        }
+      );
+  });
+}
 
 // all users
 function all() {
@@ -95,4 +109,12 @@ function all() {
   });
 }
 
-module.exports = { create, createExternalAccount, findOne, find, update, all };
+module.exports = {
+  create,
+  createExternalAccount,
+  findOne,
+  find,
+  update,
+  updaterole,
+  all,
+};
