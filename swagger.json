@@ -43,54 +43,6 @@
   "consumes": ["application/json"],
   "produces": ["application/json"],
   "paths": {
-    "/account/login/{email}": {
-      "parameters": [
-        {
-          "name": "email",
-          "in": "path",
-          "required": true,
-          "description": "email ID of the user account",
-          "type": "string"
-        },
-        {
-          "name": "Cookie",
-          "in": "header",
-          "required": true,
-          "description": "User uid from the firebase auth provider, Enter: gToken= followed by uid, e.g. gToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9",
-          "type": "string"
-        }
-      ],
-
-      "get": {
-        "tags": ["login"],
-
-        "summary": "Login in the user",
-        "produces": ["application/json"],
-        "security": [
-          {
-            "Cookie": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": {
-              "accessToken": "string",
-              "refreshToken": "string",
-              "$ref": "#/definitions/Users"
-            }
-          },
-          "403": {
-            "description": "Forbidden, invalid gToken, NOTE: cookie seems to fail in Swagger, if that happens, copy the curl command and try in terminal to get access token for other requests.",
-            "schema": {
-              "accessToken": "string",
-              "refreshToken": "string",
-              "$ref": "#/definitions/Users"
-            }
-          }
-        }
-      }
-    },
     "/account/create/{name}/{email}": {
       "parameters": [
         {
@@ -121,6 +73,54 @@
         "tags": ["create"],
 
         "summary": "create a new user",
+        "produces": ["application/json"],
+        "security": [
+          {
+            "Cookie": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "accessToken": "string",
+              "refreshToken": "string",
+              "$ref": "#/definitions/Users"
+            }
+          },
+          "403": {
+            "description": "Forbidden, invalid gToken, NOTE: cookie seems to fail in Swagger, if that happens, copy the curl command and try in terminal to get access token for other requests.",
+            "schema": {
+              "accessToken": "string",
+              "refreshToken": "string",
+              "$ref": "#/definitions/Users"
+            }
+          }
+        }
+      }
+    },
+    "/account/login/{email}": {
+      "parameters": [
+        {
+          "name": "email",
+          "in": "path",
+          "required": true,
+          "description": "email ID of the user account",
+          "type": "string"
+        },
+        {
+          "name": "Cookie",
+          "in": "header",
+          "required": true,
+          "description": "User uid from the firebase auth provider, Enter: gToken= followed by uid, e.g. gToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9",
+          "type": "string"
+        }
+      ],
+
+      "get": {
+        "tags": ["login"],
+
+        "summary": "Login in the user",
         "produces": ["application/json"],
         "security": [
           {
