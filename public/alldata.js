@@ -18,7 +18,6 @@ function AllData() {
       .then((response) => response.json())
       .then((data) => {
         userData = data.map((user) => {
-          console.log("user data fetch: ", user.email);
           return (
             <>
               <tr>
@@ -29,15 +28,8 @@ function AllData() {
             </>
           );
         });
-        console.log("map function userData: ", userData);
 
         setData(userData);
-        //return userData;
-        //setStatus(userData);
-        //let allData = document.getElementById("allData");
-        //allData.innerHTML = userData;
-
-        //allData.innerHTML = JSON.stringify(userData);
       });
   }
   return (
