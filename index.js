@@ -358,8 +358,6 @@ app.get(
     const { useremail, role } = req.user;
 
     if (role === "admin") {
-      console.log("inside admin check", role);
-
       dal
         .updaterole(req.params.authType, req.params.email, req.params.userrole)
         .then((response) => {
