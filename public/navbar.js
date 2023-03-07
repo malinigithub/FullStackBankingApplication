@@ -71,6 +71,19 @@ function NavBar() {
               All Data
             </a>
           </li>
+          <li className="nav-item">
+            <a
+              className="nav-link"
+              data-toggle="tooltip"
+              data-placement="bottom"
+              title="Admin page - Update Member Role"
+              id="manageUserLink"
+              href="#/manageuser/"
+              style={{ display: "none" }}
+            >
+              Manager Member Role
+            </a>
+          </li>
         </ul>
       </div>
 

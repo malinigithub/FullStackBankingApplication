@@ -1,8 +1,5 @@
 function Balance() {
   const userCtx = React.useContext(UserContext);
-  //console.log("userContext inside balance", userCtx);
-  const currentUser = userCtx.currentUser;
-  //console.log("userContext.currentuser inside balance", userCtx.currentUser);
 
   return (
     <Card
