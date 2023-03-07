@@ -62,7 +62,7 @@
       ],
 
       "get": {
-        "tags": ["Login"],
+        "tags": ["login"],
 
         "summary": "Login in the user",
         "produces": ["application/json"],
@@ -118,7 +118,7 @@
       ],
 
       "get": {
-        "tags": ["Create"],
+        "tags": ["create"],
 
         "summary": "create a new user",
         "produces": ["application/json"],
@@ -173,7 +173,7 @@
       ],
 
       "get": {
-        "tags": ["googleAuthLogin"],
+        "tags": ["googlelogin"],
         "summary": "Google Auth Login Flow: Note: it is not possible to test create account flow through API for google auth provider flow, since create account requires account creation in both firebase and in application. This API only exposes the application part and not the google auth provider flow",
         "produces": ["application/json"],
         "security": [
@@ -220,7 +220,7 @@
       ],
 
       "get": {
-        "tags": ["FindUser"],
+        "tags": ["find"],
 
         "summary": "Get information of specific user",
         "produces": ["application/json"],
@@ -290,7 +290,7 @@
       ],
 
       "get": {
-        "tags": ["UpdateAmount"],
+        "tags": ["update"],
         "summary": "Deposit or withdraw - update amount",
         "produces": ["application/json"],
         "security": [
@@ -337,7 +337,7 @@
             "type": "string"
           }
         ],
-        "tags": ["AllAccounts"],
+        "tags": ["all"],
         "security": [
           {
             "Authorization": []
