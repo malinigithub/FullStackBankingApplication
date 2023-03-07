@@ -4,13 +4,7 @@ function Logout() {
   let message;
 
   if (userCtx.currentUser.email) {
-    //console.log("logout");
-    let userName = document.getElementById("userName");
-    userName.innerHTML = "";
-    document.getElementById("createAccountLink").style.display = "";
-    document.getElementById("loginLink").style.display = "";
-    document.getElementById("logoutLink").style.display = "none";
-    document.getElementById("allDataLink").style.display = "none";
+    uiUpdates("", false, "");
 
     userCtx.currentUser = [, , ,];
     Cookies.remove("bearerToken");

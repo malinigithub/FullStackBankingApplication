@@ -31,11 +31,8 @@ function LoginMsg(props) {
     Cookies.remove("bearerToken");
     Cookies.remove("gToken");
     auth.signOut();
-    userName.innerHTML = "";
-    document.getElementById("createAccountLink").style.display = "";
-    document.getElementById("loginLink").style.display = "";
-    document.getElementById("logoutLink").style.display = "none";
-    document.getElementById("allDataLink").style.display = "none";
+
+    uiUpdates("", false, "");
 
     props.userCtx.currentUser = [, , ,];
     //console.log("reauth logout: ", props.userCtx.currentUser);
@@ -86,18 +83,9 @@ function LoginForm(props) {
               let jsonvalue = JSON.parse(text);
 
               Cookies.set("bearerToken", jsonvalue.accessToken);
-
-              document.getElementById("createAccountLink").style.display =
-                "none";
-              document.getElementById("loginLink").style.display = "none";
-              document.getElementById("logoutLink").style.display = "";
-
               props.userCtx.currentUser = jsonvalue.user[0];
-              if (props.userCtx.currentUser.userrole === "admin") {
-                document.getElementById("allDataLink").style.display = "";
-              }
-              let userName = document.getElementById("userName");
-              userName.innerHTML = email;
+              uiUpdates(props.userCtx.currentUser.userrole, true, email);
+
               props.setStatus("");
               props.setShow(false);
             } catch (err) {
@@ -162,19 +150,10 @@ function LoginForm(props) {
 
               Cookies.set("bearerToken", jsonvalue.accessToken);
 
-              document.getElementById("createAccountLink").style.display =
-                "none";
-              document.getElementById("loginLink").style.display = "none";
-              document.getElementById("logoutLink").style.display = "";
-              // console.log("before setting globalUserCtx");
-
               //userContext = jsonvalue.foundUser;
               props.userCtx.currentUser = jsonvalue.foundUser;
-              if (props.userCtx.currentUser.userrole === "admin") {
-                document.getElementById("allDataLink").style.display = "";
-              }
-              let userName = document.getElementById("userName");
-              userName.innerHTML = googleemail;
+
+              uiUpdates(props.userCtx.currentUser.userrole, true, googleemail);
               props.setStatus("");
               props.setShow(false);
             } catch (err) {
